@@ -27,15 +27,16 @@ using namespace okapi;
 #define MAX_SPEED (80.0)
 #define THREE_QUARTER_SPEED (60.0)
 #define HALF_SPEED (40.0)
+#define SLOW_SPEED (20.0)
 
 #define LIFT_POSITION_BOTTOM 0.0
 #define LIFT_POSITION_MIDDLE 2000.0
 #define LIFT_POSITION_TOP    4000.0
-/*
-pros::Motor la_mtr(LEFT_ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
-pros::Motor ra_mtr(RIGHT_ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36, true);
-pros::Motor li_mtr(LEFT_INTAKE_MOTOR_PORT);
-pros::Motor ri_mtr(RIGHT_INTAKE_MOTOR_PORT, true);
+
+extern pros::Motor la_mtr;
+extern pros::Motor ra_mtr;
+extern pros::Motor li_mtr;
+extern pros::Motor ri_mtr;
 
 void intake_on(double speed = 200.0)
 {
@@ -47,7 +48,7 @@ void intake_off()
   li_mtr.move_velocity(0);
   ri_mtr.move_velocity(0);
 }
-*/
+
 void autonomous()
 {
   // Create controllers
