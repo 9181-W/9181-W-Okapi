@@ -39,6 +39,16 @@ extern pros::Motor ra_mtr;
 extern pros::Motor li_mtr;
 extern pros::Motor ri_mtr;
 
+auto chassis = ChassisControllerFactory::create(
+  {LEFT_FRONT_WHEEL_PORT, LEFT_REAR_WHEEL_PORT},
+  {-RIGHT_FRONT_WHEEL_PORT, -RIGHT_REAR_WHEEL_PORT},
+  IterativePosPIDController::Gains{0.005, 0, 0.0001},
+  IterativePosPIDController::Gains{0.005, 0, 0.0001},
+  IterativePosPIDController::Gains{0.005, 0, 0.0001},
+  AbstractMotor::gearset::green,
+  {4.0_in, 14.375_in}
+);
+
 void intake_on(double speed = 200.0)
 {
   li_mtr.move_velocity(speed);
@@ -53,15 +63,6 @@ void intake_off()
 void autonomous()
 {
   // Create controllers
-  auto chassis = ChassisControllerFactory::create(
-    {LEFT_FRONT_WHEEL_PORT, LEFT_REAR_WHEEL_PORT},
-    {-RIGHT_FRONT_WHEEL_PORT, -RIGHT_REAR_WHEEL_PORT},
-    IterativePosPIDController::Gains{0.005, 0, 0.0001},
-    IterativePosPIDController::Gains{0.005, 0, 0.0001},
-    IterativePosPIDController::Gains{0.005, 0, 0.0001},
-    AbstractMotor::gearset::green,
-    {4.0_in, 14.375_in}
-  );
 
   pros::Motor la_mtr(LEFT_ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
   pros::Motor ra_mtr(RIGHT_ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36, true);
