@@ -124,7 +124,9 @@ void autonomous()
   */
 
 // Skills
+
   chassis.setMaxVelocity(MAX_SPEED);
+
   la_mtr.move(127);
   ra_mtr.move(127);
   pros::delay(400);
@@ -146,12 +148,13 @@ void autonomous()
   chassis.turnAngle(35_deg);
   chassis.setMaxVelocity(MAX_SPEED);
   chassis.moveDistanceAsync(8.5_in);
+  chassis.waitUntilSettled();
   li_mtr.move(140);
   ri_mtr.move(140);
-  chassis.waitUntilSettled();
+  pros::delay(450);
   li_mtr.move(-75);
   ri_mtr.move(-75);
-  pros::delay(100);
+  pros::delay(200);
   li_mtr.move(100);
   ri_mtr.move(100);
   pros::delay(100);
@@ -171,31 +174,31 @@ void autonomous()
   ri_mtr.move(0);
   pros::delay(400);
   chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-48_deg);
+  chassis.turnAngle(-52_deg);
   chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(10_in);
+  chassis.moveDistanceAsync(12.25_in);
   chassis.waitUntilSettled();
-  li_mtr.move(140);
-  ri_mtr.move(140);
-  pros::delay(300);
+  li_mtr.move(200);
+  ri_mtr.move(200);
+  pros::delay(600);
   li_mtr.move(0);
   ri_mtr.move(0);
   li_mtr.move(-75);
   ri_mtr.move(-75);
   pros::delay(100);
-  li_mtr.move(100);
-  ri_mtr.move(100);
+  li_mtr.move(120);
+  ri_mtr.move(120);
   pros::delay(100);
   li_mtr.move(0);
   ri_mtr.move(0);
   chassis.moveDistanceAsync(-9_in);
   chassis.waitUntilSettled();
   chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-175_deg);
+  chassis.turnAngle(-173_deg);
   chassis.setMaxVelocity(MAX_SPEED);
-  li_mtr.move(180);
-  ri_mtr.move(180);
-  pros::delay(1600);
+  li_mtr.move(200);
+  ri_mtr.move(200);
+  pros::delay(1400);
   li_mtr.move(0);
   ri_mtr.move(0);
   chassis.setMaxVelocity(HALF_SPEED);
@@ -204,9 +207,9 @@ void autonomous()
   chassis.moveDistanceAsync(15_in);
   chassis.waitUntilSettled();
   chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-103_deg);
+  chassis.turnAngle(-100_deg);
   chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(13_in);
+  chassis.moveDistanceAsync(15.5_in);
   chassis.waitUntilSettled();
   li_mtr.move(180);
   ri_mtr.move(180);
@@ -221,9 +224,34 @@ void autonomous()
   pros::delay(100);
   li_mtr.move(0);
   ri_mtr.move(0);
+  chassis.moveDistanceAsync(-4_in);
+  chassis.waitUntilSettled();
+  chassis.setMaxVelocity(HALF_SPEED);
+  chassis.turnAngle(140_deg);
+  chassis.setMaxVelocity(MAX_SPEED);
+  chassis.moveDistanceAsync(28_in);
+  chassis.waitUntilSettled();  ra_mtr.move(80);
+  la_mtr.move(80);
+  pros::delay(400);
+  la_mtr.move(0);
+  ra_mtr.move(0);
+  pros::delay(200);
+  ra_mtr.move(80);
+  la_mtr.move(80);
+  pros::delay(1200);
+  la_mtr.move(0);
+  ra_mtr.move(0);
+  chassis.setMaxVelocity(HALF_SPEED);
+  chassis.moveDistanceAsync(4_in);
+  chassis.waitUntilSettled();
+  chassis.setMaxVelocity(MEGA_MAX_SPEED);
+  chassis.moveDistanceAsync(-10_in);
+  chassis.waitUntilSettled();
 
 
-  /*
+
+
+/*
   //Back Blue
   chassis.setMaxVelocity(MAXISH_SPEED);
   la_mtr.move(127);
