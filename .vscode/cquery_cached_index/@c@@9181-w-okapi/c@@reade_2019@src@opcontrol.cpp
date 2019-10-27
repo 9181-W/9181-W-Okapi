@@ -22,8 +22,8 @@ extern "C" void __sync_synchronize() {}
 #define LEFT_REAR_WHEEL_PORT 11
 #define RIGHT_FRONT_WHEEL_PORT 10
 #define RIGHT_REAR_WHEEL_PORT 20
-#define LEFT_ARM_MOTOR_PORT 15
-#define RIGHT_ARM_MOTOR_PORT 16
+#define TRAY_MOTOR_PORT 15
+#define ARM_MOTOR_PORT 16
 #define LEFT_INTAKE_MOTOR_PORT 8
 #define RIGHT_INTAKE_MOTOR_PORT 2
 #define SCALE 1.0
@@ -33,8 +33,8 @@ pros::Motor lf_mtr(LEFT_FRONT_WHEEL_PORT);
 pros::Motor lr_mtr(LEFT_REAR_WHEEL_PORT);
 pros::Motor rf_mtr(RIGHT_FRONT_WHEEL_PORT, true);
 pros::Motor rr_mtr(RIGHT_REAR_WHEEL_PORT, true);
-pros::Motor la_mtr(LEFT_ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
-pros::Motor ra_mtr(RIGHT_ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36, true);
+pros::Motor a_mtr(ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
+pros::Motor t_mtr(TRAY_MOTOR_PORT, pros::E_MOTOR_GEARSET_36, true);
 pros::Motor li_mtr(LEFT_INTAKE_MOTOR_PORT);
 pros::Motor ri_mtr(RIGHT_INTAKE_MOTOR_PORT, true);
 
@@ -51,8 +51,8 @@ void opcontrol()
   lr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-  la_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  ra_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  a_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  t_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   li_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   ri_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
@@ -83,41 +83,33 @@ void opcontrol()
 		// make arm move
 		if (master.get_digital(DIGITAL_R2) == 1)
 		{
-			ra_mtr.move(45);
-			la_mtr.move(45);
+			t_mtr.move(45)
 		}
 		else if (master.get_digital(DIGITAL_L2) == 1)
 		{
-			ra_mtr.move(-70);
-			la_mtr.move(-70);
+			t_mtr.move(-70);
 		}
 		else
 		{
-			ra_mtr.move(0);
-			la_mtr.move(0);
+			t_mtr.move(0);
 		}
 
     if (master.get_digital(DIGITAL_B))
     {
-      la_mtr.move(-127);
-      ra_mtr.move(-127);
+      t_mtr.move(-127);
     }
 
     //Use Y button to open cartridge
     static bool do_once = true;
     if ((master.get_digital(DIGITAL_Y) == 1) && do_once)
     {
-      la_mtr.move(127);
-      ra_mtr.move(127);
+      t_mtr.move(127);
       pros::delay(400);
-      ra_mtr.move(0);
-      la_mtr.move(0);
+      t_mtr.move(0);
       pros::delay(400);
-      la_mtr.move(-127);
-      ra_mtr.move(-127);
+      t_mtr.move(-127);
       pros::delay(400);
-      ra_mtr.move(0);
-      la_mtr.move(0);
+      t_mtr.move(0);
       do_once = false;
     }
 

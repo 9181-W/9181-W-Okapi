@@ -18,8 +18,8 @@ using namespace okapi;
 #define LEFT_REAR_WHEEL_PORT 11
 #define RIGHT_FRONT_WHEEL_PORT 10
 #define RIGHT_REAR_WHEEL_PORT 20
-#define LEFT_ARM_MOTOR_PORT 15
-#define RIGHT_ARM_MOTOR_PORT 16
+#define TRAY_MOTOR_PORT 15
+#define ARM_MOTOR_PORT 16
 #define LEFT_INTAKE_MOTOR_PORT 8
 #define RIGHT_INTAKE_MOTOR_PORT 2
 
@@ -34,12 +34,13 @@ using namespace okapi;
 #define LIFT_POSITION_MIDDLE 2000.0
 #define LIFT_POSITION_TOP    4000.0
 
-extern pros::Motor la_mtr;
-extern pros::Motor ra_mtr;
+extern pros::Motor a_mtr;
+extern pros::Motor t_mtr;
 extern pros::Motor li_mtr;
 extern pros::Motor ri_mtr;
 
-auto chassis = ChassisControllerFactory::create(
+auto chassis = ChassisControllerFactory::create
+(
   {LEFT_FRONT_WHEEL_PORT, LEFT_REAR_WHEEL_PORT},
   {-RIGHT_FRONT_WHEEL_PORT, -RIGHT_REAR_WHEEL_PORT},
   IterativePosPIDController::Gains{0.005, 0, 0.0001},
@@ -64,13 +65,13 @@ void autonomous()
 {
   // Create controllers
 
-  pros::Motor la_mtr(LEFT_ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
-  pros::Motor ra_mtr(RIGHT_ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36, true);
+  pros::Motor a_mtr(ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
+  pros::Motor t_mtr(TRAY_MOTOR_PORT, pros::E_MOTOR_GEARSET_36, true);
   pros::Motor li_mtr(LEFT_INTAKE_MOTOR_PORT);
   pros::Motor ri_mtr(RIGHT_INTAKE_MOTOR_PORT, true);
 
-  la_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  ra_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  a_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  t_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   li_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   ri_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
@@ -162,6 +163,8 @@ void autonomous()
   ri_mtr.move(0);
   */
 
+
+/*
   chassis.setMaxVelocity(MEGA_MAX_SPEED);
   la_mtr.move(127);
   ra_mtr.move(127);
@@ -287,6 +290,8 @@ void autonomous()
   chassis.setMaxVelocity(MEGA_MAX_SPEED);
   chassis.moveDistanceAsync(-10_in);
   chassis.waitUntilSettled();
+  */
+
 
 /*
   //Downstairs Back Blue
@@ -406,7 +411,7 @@ void autonomous()
     li_mtr.move(0);
     ri_mtr.move(0);
     chassis.waitUntilSettled();
-    chassis.turnAngle(15_deg);
+    //chassis.turnAngle(15_deg);
     chassis.waitUntilSettled();
     ra_mtr.move(80);
     la_mtr.move(80);
@@ -427,7 +432,7 @@ void autonomous()
     chassis.waitUntilSettled();
     */
 
-    /*
+/*
       //Upstairs Back Blue
       chassis.setMaxVelocity(MEGA_MAX_SPEED);
       la_mtr.move(127);
@@ -466,7 +471,7 @@ void autonomous()
       chassis.moveDistanceAsync(-20_in);
       chassis.waitUntilSettled();
       chassis.turnAngle(-179_deg);
-      chassis.moveDistanceAsync(21_in);
+      chassis.moveDistanceAsync(22.25_in);
       li_mtr.move(-75);
       ri_mtr.move(-75);
       pros::delay(100);
@@ -476,7 +481,7 @@ void autonomous()
       li_mtr.move(0);
       ri_mtr.move(0);
       chassis.waitUntilSettled();
-      chassis.turnAngle(-15_deg);
+      //chassis.turnAngle(15_deg);
       chassis.waitUntilSettled();
       ra_mtr.move(80);
       la_mtr.move(80);
@@ -495,7 +500,8 @@ void autonomous()
       chassis.setMaxVelocity(MEGA_MAX_SPEED);
       chassis.moveDistanceAsync(-10_in);
       chassis.waitUntilSettled();
-      */
+
+*/
 
 /*
   //blue/red front autonomous
@@ -515,7 +521,7 @@ void autonomous()
   chassis.waitUntilSettled();
   chassis.moveDistanceAsync(9_in);
   chassis.waitUntilSettled();
-  */
+*/
 
 
 
