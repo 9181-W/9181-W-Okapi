@@ -3,7 +3,7 @@
 //void __sync_synchronize(void) {
 //    __sync_synchronize();
 //}
-extern "C" void __sync_synchronize() {}
+//extern "C" void __sync_synchronize() {}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -83,7 +83,15 @@ void opcontrol()
 		// make arm move
 		if (master.get_digital(DIGITAL_R2) == 1)
 		{
-			t_mtr.move(45);
+			//t_mtr.move(65);
+      if (t_mtr.get_position() > 1650)
+      {
+        t_mtr.move(40);
+      }
+      else if (t_mtr.get_position() < 1650)
+      {
+        t_mtr.move(80);
+      }
 		}
 		else if (master.get_digital(DIGITAL_L2) == 1)
 		{
@@ -103,12 +111,18 @@ void opcontrol()
     static bool do_once = true;
     if ((master.get_digital(DIGITAL_Y) == 1) && do_once)
     {
-      t_mtr.move(127);
-      pros::delay(400);
+      t_mtr.move(200);
+      pros::delay(800);
       t_mtr.move(0);
-      pros::delay(400);
-      t_mtr.move(-127);
-      pros::delay(400);
+      t_mtr.move(-200);
+      pros::delay(200);
+      a_mtr.move(200);
+      pros::delay(1400);
+      a_mtr.move(0);
+      a_mtr.move(-200);
+      pros::delay(1000);
+      t_mtr.move(200);
+      pros::delay(100);
       t_mtr.move(0);
       do_once = false;
     }
@@ -145,69 +159,6 @@ void opcontrol()
 
 		pros::delay(2);
 	}
-}
-
-void arcade_control_1()
-{
-  int power = master.get_analog(ANALOG_LEFT_Y);
-  int turn = master.get_analog(ANALOG_RIGHT_X);
-  int left = power;
-  int right = power;
-
-	if (turn < -64)
-	{
-		left = power * -1;
-	}
-
-	if (turn > 64)
-	{
-		right = power * -1;
-	}
-
-	left = left * SCALE;
-	right = right * SCALE;
-
-  lf_mtr.move(left);
-  lr_mtr.move(left);
-	rf_mtr.move(right);
-	rr_mtr.move(right);
-}
-
-
-void arcade_control_2()
-{
-	int power = master.get_analog(ANALOG_LEFT_Y);
-	int turn = master.get_analog(ANALOG_RIGHT_X);
-	int left = power + turn;
-	int right = power - turn;
-
-  if (left > 127)
-	{
-	  left = 127;
-	}
-
-	if (left < -127)
-	{
-		left = -127;
-	}
-
-	if (right > 127)
-	{
-		right = 127;
-	}
-
-	if (right < -127)
-	{
-		right = -127;
-	}
-
-	left = left * SCALE;
-	right = right * SCALE;
-
-	lf_mtr.move(left);
-	lr_mtr.move(left);
-	rf_mtr.move(right);
-	rr_mtr.move(right);
 }
 
 
@@ -248,20 +199,4 @@ void arcade_control_3()
 	lr_mtr.move(left);
 	rf_mtr.move(right);
 	rr_mtr.move(right);
-}
-
-
-void tank_control()
-{
-	// Read the controller
-  float left = master.get_analog(ANALOG_LEFT_Y);
-	float right = master.get_analog(ANALOG_RIGHT_Y);
-
-  // Set the speed of the motors.
-	left = left * SCALE;
-	right = right * SCALE;
-  lf_mtr.move(left);
-	lr_mtr.move(left);
-	rf_mtr.move(right);
-  rr_mtr.move(right);
 }
