@@ -23,23 +23,98 @@ using namespace okapi;
 #define LEFT_INTAKE_MOTOR_PORT 8
 #define RIGHT_INTAKE_MOTOR_PORT 2
 
-#define MEGA_MAX_SPEED (100.0)
-#define MAXER_SPEED (127.0)
-#define MAXISH_SPEED (90.0)
-#define MAX_SPEED (80.0)
-#define THREE_QUARTER_SPEED (60.0)
-#define HALF_SPEED (40.0)
-#define SLOW_SPEED (20.0)
+#define MAX_SPEED (200.0)
+#define THREE_QUARTER_SPEED (150.0)
+#define HALF_SPEED (100.0)
+#define NINETY_SPEED (90.0)
+#define SEVENTY_FIVE_SPEED (75.0)
+#define SIXTY_SPEED (60.0)
+#define FIFTY_SPEED (50.0)
+#define FORTY_SPEED (40.0)
+#define TWENTY_FIVE_SPEED (25.0)
 
-#define LIFT_POSITION_BOTTOM 0.0
-#define LIFT_POSITION_MIDDLE 2000.0
-#define LIFT_POSITION_TOP    4000.0
+#define NUMBER_OF_HEIGHTS 4
+#define ARM_POSITION_BOTTOM 0
+#define ALLIANCE_TOWER 2000
+#define SHORT_TOWER  4000
+#define MEDIUM_HIGH_TOWER 6000
+#define TRAY_BOTTOM_POS 0
+#define TRAY_PLACE_POS 360
+#define TRAY_SLOW_POS 160
+
+const int POSITIONS[NUMBER_OF_HEIGHTS] =
+  {ARM_POSITION_BOTTOM, ALLIANCE_TOWER, SHORT_TOWER, MEDIUM_HIGH_TOWER};
 
 extern pros::Motor a_mtr;
 extern pros::Motor t_mtr;
 extern pros::Motor li_mtr;
 extern pros::Motor ri_mtr;
+extern double get_proper_gyro();
+extern void gyro_turn(double angle);
 
+//TRAY PID
+auto tray = AsyncControllerFactory::posIntegrated(TRAY_MOTOR_PORT);
+
+void tray_return()
+{
+  tray.setMaxVelocity(MAX_SPEED);
+  tray.setTarget(TRAY_BOTTOM_POS);
+  tray.waitUntilSettled();
+}
+
+void three_cubes()
+{
+  tray.reset();
+  tray.setMaxVelocity(FORTY_SPEED);
+  tray.setTarget(TRAY_PLACE_POS);
+  tray.waitUntilSettled();
+
+}
+
+void six_cubes()
+{
+  tray.reset();
+  tray.setMaxVelocity(FORTY_SPEED);
+  tray.setTarget(TRAY_PLACE_POS);
+  tray.waitUntilSettled();
+}
+
+void nine_cubes()
+{
+  tray.reset();
+  tray.setMaxVelocity(FORTY_SPEED);
+  tray.setTarget(TRAY_PLACE_POS);
+  tray.waitUntilSettled();
+}
+
+//ARM POSITION PID
+auto arm = AsyncControllerFactory::posIntegrated(ARM_MOTOR_PORT);
+
+void bottom()
+{
+  arm.setTarget(POSITIONS[0]);
+  arm.waitUntilSettled();
+}
+
+void alliance_tower()
+{
+  arm.setTarget(POSITIONS[1]);
+  arm.waitUntilSettled();
+}
+
+void short_tower()
+{
+  arm.setTarget(POSITIONS[2]);
+  arm.waitUntilSettled();
+}
+
+void medium_high_tower()
+{
+  arm.setTarget(POSITIONS[3]);
+  arm.waitUntilSettled();
+}
+
+//CHASSIS PID
 auto chassis = ChassisControllerFactory::create
 (
   {LEFT_FRONT_WHEEL_PORT, LEFT_REAR_WHEEL_PORT},
@@ -51,20 +126,25 @@ auto chassis = ChassisControllerFactory::create
   {4.0_in, 9_in}
 );
 
+//INTAKE VELOCITY PID
+auto intakes = AsyncControllerFactory::velIntegrated
+(
+  {LEFT_INTAKE_MOTOR_PORT, RIGHT_INTAKE_MOTOR_PORT}
+);
+
 void intake_on(double speed = 200.0)
 {
-  li_mtr.move_velocity(speed);
-  ri_mtr.move_velocity(speed);
+  intakes.setTarget(speed);
 }
+
 void intake_off()
 {
-  li_mtr.move_velocity(0);
-  ri_mtr.move_velocity(0);
+  intakes.setTarget(0);
+  intakes.reset();
 }
 
 void autonomous()
 {
-  // Create controllers
 
   pros::Motor a_mtr(ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
   pros::Motor t_mtr(TRAY_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
@@ -76,6 +156,19 @@ void autonomous()
   li_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   ri_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
+
+//TEST
+
+  gyro_turn(-180);
+  //chassis.setMaxVelocity(HALF_SPEED);
+  //chassis.moveDistanceAsync(7_in);
+  //intake_on(200);
+  //pros::delay(5000);
+  //chassis.waitUntilSettled();
+  //intake_off();
+  //short_tower();
+  //six_cubes();
+  //tray_return();
 
 //BACK BLUE
 /*
@@ -166,9 +259,11 @@ void autonomous()
     chassis.waitUntilSettled();
 */
 
+
+/*
 //FRONT
     chassis.setMaxVelocity(MAXER_SPEED);
-  /*  t_mtr.move(200);
+    t_mtr.move(200);
     pros::delay(800);
     t_mtr.move(0);
     t_mtr.move(-200);
@@ -180,12 +275,12 @@ void autonomous()
     pros::delay(800);
     t_mtr.move(200);
     pros::delay(100);
-    t_mtr.move(0);*/
+    t_mtr.move(0);
     chassis.moveDistanceAsync(-11_in);
     chassis.waitUntilSettled();
     chassis.moveDistanceAsync(11_in);
     chassis.waitUntilSettled();
-
+*/
 
 //SKILLS
 /*
@@ -231,455 +326,4 @@ t_mtr.move(0);
 chassis.moveDistanceAsync(-6_in);
 chassis.waitUntilSettled();
 */
-
-  /*
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(42_in);
-  intake_on(200);
-  chassis.waitUntilSettled();
-  intake_off();
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(35_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(8.5_in);
-  intake_on(200);
-  chassis.waitUntilSettled();
-  intake_off();
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(40_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(-7.4_in);
-  intake_on(200);
-  chassis.waitUntilSettled();
-  intake_on(200);
-  pros::delay(200);
-  intake_off();
-  pros::delay(400);
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-53_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(10.5_in);
-  intake_on(154);
-  chassis.waitUntilSettled();
-  intake_off();
-  chassis.moveDistanceAsync(-9_in);
-  chassis.waitUntilSettled();
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-173_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  intake_on(180);
-  pros::delay(1600);
-  intake_off();
-  chassis.moveDistanceAsync(13_in);
-  chassis.waitUntilSettled();
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-115_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(18.5_in);
-  intake_on(200);
-  chassis.waitUntilSettled();
-  intake_off();
-  */
-
-//Upstairs Skills
-/*
-  chassis.setMaxVelocity(MAX_SPEED);
-
-  la_mtr.move(127);
-  ra_mtr.move(127);
-  pros::delay(400);
-  ra_mtr.move(0);
-  la_mtr.move(0);
-  pros::delay(400);
-  la_mtr.move(-127);
-  ra_mtr.move(-127);
-  pros::delay(400);
-  ra_mtr.move(0);
-  la_mtr.move(0);
-  chassis.moveDistanceAsync(42_in);
-  li_mtr.move(150);
-  ri_mtr.move(150);
-  chassis.waitUntilSettled();
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(35_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(7.5_in);
-  chassis.waitUntilSettled();
-  li_mtr.move(140);
-  ri_mtr.move(140);
-  pros::delay(500);
-  li_mtr.move(-75);
-  ri_mtr.move(-75);
-  pros::delay(100);
-  li_mtr.move(100);
-  ri_mtr.move(100);
-  pros::delay(100);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  */
-
-
-/*
-  chassis.setMaxVelocity(MEGA_MAX_SPEED);
-  la_mtr.move(127);
-  ra_mtr.move(127);
-  pros::delay(400);
-  ra_mtr.move(0);
-  la_mtr.move(0);
-  pros::delay(400);
-  la_mtr.move(-127);
-  ra_mtr.move(-127);
-  pros::delay(400);
-  ra_mtr.move(0);
-  la_mtr.move(0);
-  pros::delay(200);
-  chassis.moveDistanceAsync(41_in);
-  li_mtr.move(180);
-  ri_mtr.move(180);
-  chassis.waitUntilSettled();
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.setMaxVelocity(THREE_QUARTER_SPEED);
-  chassis.turnAngle(35_deg);
-  chassis.setMaxVelocity(MAXISH_SPEED);
-  chassis.moveDistanceAsync(8.5_in);
-  chassis.waitUntilSettled();
-  li_mtr.move(150);
-  ri_mtr.move(150);
-  pros::delay(480);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  li_mtr.move(-100);
-  ri_mtr.move(-100);
-  pros::delay(75);
-  li_mtr.move(100);
-  ri_mtr.move(100);
-  pros::delay(100);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(38_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(-12.25_in);
-  chassis.waitUntilSettled();
-  li_mtr.move(200);
-  ri_mtr.move(200);
-  pros::delay(800);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  pros::delay(400);
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-47_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(15.75_in);
-  chassis.waitUntilSettled();
-  li_mtr.move(200);
-  ri_mtr.move(200);
-  pros::delay(635);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  li_mtr.move(-75);
-  ri_mtr.move(-75);
-  pros::delay(80);
-  li_mtr.move(120);
-  ri_mtr.move(120);
-  pros::delay(100);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.moveDistanceAsync(-8_in);
-  chassis.waitUntilSettled();
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-173_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  li_mtr.move(-75);
-  ri_mtr.move(-75);
-  pros::delay(100);
-  li_mtr.move(120);
-  ri_mtr.move(120);
-  pros::delay(100);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  li_mtr.move(200);
-  ri_mtr.move(200);
-  pros::delay(1150);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-35_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(16.25_in);
-  chassis.waitUntilSettled();
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(-105_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(18_in);
-  chassis.waitUntilSettled();
-  li_mtr.move(190);
-  ri_mtr.move(190);
-  pros::delay(500);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  li_mtr.move(-75);
-  ri_mtr.move(-75);
-  pros::delay(100);
-  li_mtr.move(100);
-  ri_mtr.move(100);
-  pros::delay(100);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.moveDistanceAsync(-4_in);
-  chassis.waitUntilSettled();
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.turnAngle(140_deg);
-  chassis.setMaxVelocity(MAX_SPEED);
-  chassis.moveDistanceAsync(31_in);
-  chassis.waitUntilSettled();
-  ra_mtr.move(60);
-  la_mtr.move(60);
-  pros::delay(2000);
-  la_mtr.move(0);
-  ra_mtr.move(0);
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.moveDistanceAsync(4.5_in);
-  chassis.waitUntilSettled();
-  chassis.setMaxVelocity(MEGA_MAX_SPEED);
-  chassis.moveDistanceAsync(-10_in);
-  chassis.waitUntilSettled();
-  */
-
-
-/*
-  //Downstairs Back Blue
-  chassis.setMaxVelocity(MAXISH_SPEED);
-  la_mtr.move(127);
-  ra_mtr.move(127);
-  pros::delay(400);
-  ra_mtr.move(0);
-  la_mtr.move(0);
-  pros::delay(400);
-  la_mtr.move(-127);
-  ra_mtr.move(-127);
-  pros::delay(400);
-  ra_mtr.move(0);
-  la_mtr.move(0);
-  pros::delay(200);
-  chassis.moveDistanceAsync(41_in);
-  li_mtr.move(160);
-  ri_mtr.move(160);
-  chassis.waitUntilSettled();
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.setMaxVelocity(THREE_QUARTER_SPEED);
-  chassis.turnAngle(35_deg);
-  chassis.setMaxVelocity(MAXISH_SPEED);
-  chassis.moveDistanceAsync(10_in);
-  li_mtr.move(150);
-  ri_mtr.move(150);
-  chassis.waitUntilSettled();
-  li_mtr.move(-75);
-  ri_mtr.move(-75);
-  pros::delay(100);
-  li_mtr.move(100);
-  ri_mtr.move(100);
-  pros::delay(100);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.moveDistanceAsync(-20_in);
-  chassis.waitUntilSettled();
-  chassis.turnAngle(182_deg);
-  chassis.moveDistanceAsync(19_in);
-  li_mtr.move(-75);
-  ri_mtr.move(-75);
-  pros::delay(100);
-  li_mtr.move(100);
-  ri_mtr.move(100);
-  pros::delay(100);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.waitUntilSettled();
-  ra_mtr.move(80);
-  la_mtr.move(80);
-  pros::delay(400);
-  la_mtr.move(0);
-  ra_mtr.move(0);
-  pros::delay(200);
-  ra_mtr.move(80);
-  la_mtr.move(80);
-  pros::delay(1200);
-  la_mtr.move(0);
-  ra_mtr.move(0);
-  chassis.setMaxVelocity(HALF_SPEED);
-  chassis.moveDistanceAsync(4_in);
-  chassis.waitUntilSettled();
-  chassis.setMaxVelocity(MEGA_MAX_SPEED);
-  chassis.moveDistanceAsync(-10_in);
-  chassis.waitUntilSettled();
-  */
-
-
-/*
-    //Upstairs Back Red
-    chassis.setMaxVelocity(MAXISH_SPEED);
-    la_mtr.move(127);
-    ra_mtr.move(127);
-    pros::delay(400);
-    ra_mtr.move(0);
-    la_mtr.move(0);
-    pros::delay(400);
-    la_mtr.move(-127);
-    ra_mtr.move(-127);
-    pros::delay(400);
-    ra_mtr.move(0);
-    la_mtr.move(0);
-    pros::delay(200);
-    chassis.moveDistanceAsync(41_in);
-    li_mtr.move(160);
-    ri_mtr.move(160);
-    chassis.waitUntilSettled();
-    li_mtr.move(0);
-    ri_mtr.move(0);
-    chassis.setMaxVelocity(THREE_QUARTER_SPEED);
-    chassis.turnAngle(35_deg);
-    chassis.setMaxVelocity(MAXISH_SPEED);
-    chassis.moveDistanceAsync(10_in);
-    li_mtr.move(150);
-    ri_mtr.move(150);
-    chassis.waitUntilSettled();
-    li_mtr.move(-75);
-    ri_mtr.move(-75);
-    pros::delay(100);
-    li_mtr.move(100);
-    ri_mtr.move(100);
-    pros::delay(100);
-    li_mtr.move(0);
-    ri_mtr.move(0);
-    chassis.moveDistanceAsync(-20_in);
-    chassis.waitUntilSettled();
-    chassis.turnAngle(179_deg);
-    chassis.moveDistanceAsync(21_in);
-    li_mtr.move(-75);
-    ri_mtr.move(-75);
-    pros::delay(100);
-    li_mtr.move(100);
-    ri_mtr.move(100);
-    pros::delay(100);
-    li_mtr.move(0);
-    ri_mtr.move(0);
-    chassis.waitUntilSettled();
-    //chassis.turnAngle(15_deg);
-    chassis.waitUntilSettled();
-    ra_mtr.move(80);
-    la_mtr.move(80);
-    pros::delay(400);
-    la_mtr.move(0);
-    ra_mtr.move(0);
-    pros::delay(200);
-    ra_mtr.move(80);
-    la_mtr.move(80);
-    pros::delay(1200);
-    la_mtr.move(0);
-    ra_mtr.move(0);
-    chassis.setMaxVelocity(HALF_SPEED);
-    chassis.moveDistanceAsync(4_in);
-    chassis.waitUntilSettled();
-    chassis.setMaxVelocity(MEGA_MAX_SPEED);
-    chassis.moveDistanceAsync(-10_in);
-    chassis.waitUntilSettled();
-    */
-
-/*
-      //Upstairs Back Blue
-      chassis.setMaxVelocity(MEGA_MAX_SPEED);
-      la_mtr.move(127);
-      ra_mtr.move(127);
-      pros::delay(400);
-      ra_mtr.move(0);
-      la_mtr.move(0);
-      pros::delay(400);
-      la_mtr.move(-127);
-      ra_mtr.move(-127);
-      pros::delay(400);
-      ra_mtr.move(0);
-      la_mtr.move(0);
-      pros::delay(200);
-      chassis.moveDistanceAsync(41_in);
-      li_mtr.move(180);
-      ri_mtr.move(180);
-      chassis.waitUntilSettled();
-      li_mtr.move(0);
-      ri_mtr.move(0);
-      chassis.setMaxVelocity(THREE_QUARTER_SPEED);
-      chassis.turnAngle(-35_deg);
-      chassis.setMaxVelocity(MAXISH_SPEED);
-      chassis.moveDistanceAsync(10_in);
-      li_mtr.move(150);
-      ri_mtr.move(150);
-      chassis.waitUntilSettled();
-      li_mtr.move(-75);
-      ri_mtr.move(-75);
-      pros::delay(100);
-      li_mtr.move(100);
-      ri_mtr.move(100);
-      pros::delay(100);
-      li_mtr.move(0);
-      ri_mtr.move(0);
-      chassis.moveDistanceAsync(-20_in);
-      chassis.waitUntilSettled();
-      chassis.turnAngle(-179_deg);
-      chassis.moveDistanceAsync(22.25_in);
-      li_mtr.move(-75);
-      ri_mtr.move(-75);
-      pros::delay(100);
-      li_mtr.move(100);
-      ri_mtr.move(100);
-      pros::delay(100);
-      li_mtr.move(0);
-      ri_mtr.move(0);
-      chassis.waitUntilSettled();
-      //chassis.turnAngle(15_deg);
-      chassis.waitUntilSettled();
-      ra_mtr.move(80);
-      la_mtr.move(80);
-      pros::delay(400);
-      la_mtr.move(0);
-      ra_mtr.move(0);
-      pros::delay(200);
-      ra_mtr.move(80);
-      la_mtr.move(80);
-      pros::delay(1200);
-      la_mtr.move(0);
-      ra_mtr.move(0);
-      chassis.setMaxVelocity(HALF_SPEED);
-      chassis.moveDistanceAsync(4_in);
-      chassis.waitUntilSettled();
-      chassis.setMaxVelocity(MEGA_MAX_SPEED);
-      chassis.moveDistanceAsync(-10_in);
-      chassis.waitUntilSettled();
-
-*/
-
-/*
-  //blue/red front autonomous
-  chassis.setMaxVelocity(THREE_QUARTER_SPEED);
-  la_mtr.move(127);
-  ra_mtr.move(127);
-  pros::delay(400);
-  ra_mtr.move(0);
-  la_mtr.move(0);
-  pros::delay(400);
-  la_mtr.move(-127);
-  ra_mtr.move(-127);
-  pros::delay(400);
-  ra_mtr.move(0);
-  la_mtr.move(0);
-  chassis.moveDistanceAsync(-9_in);
-  chassis.waitUntilSettled();
-  chassis.moveDistanceAsync(9_in);
-  chassis.waitUntilSettled();
-*/
-
-
-
 }

@@ -1,4 +1,6 @@
 #include "main.h"
+#include "okapi/api.hpp"
+using namespace okapi;
 
 //void __sync_synchronize(void) {
 //    __sync_synchronize();
@@ -33,16 +35,13 @@ pros::Motor lf_mtr(LEFT_FRONT_WHEEL_PORT);
 pros::Motor lr_mtr(LEFT_REAR_WHEEL_PORT);
 pros::Motor rf_mtr(RIGHT_FRONT_WHEEL_PORT, true);
 pros::Motor rr_mtr(RIGHT_REAR_WHEEL_PORT, true);
-pros::Motor t_mtr(TRAY_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
 pros::Motor a_mtr(ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36, true);
 pros::Motor li_mtr(LEFT_INTAKE_MOTOR_PORT);
 pros::Motor ri_mtr(RIGHT_INTAKE_MOTOR_PORT, true);
+okapi::Motor t_mtr(TRAY_MOTOR_PORT,false,AbstractMotor::gearset::red);
 
 // Forward declarations
-void arcade_control_1();
-void arcade_control_2();
-void arcade_control_3();
-void tank_control();
+void arcade_control();
 
 void opcontrol()
 {
@@ -51,17 +50,14 @@ void opcontrol()
   lr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   rr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-  t_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  t_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
   a_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   li_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   ri_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
 	while (true)
 	{
-    //arcade_control_1();
-	  //arcade_control_2();
-	  arcade_control_3();
-	  //tank_control();
+	  arcade_control();
 
 		//Use buttons to make intake move
 		if (master.get_digital(DIGITAL_R1) == 1)
@@ -83,34 +79,34 @@ void opcontrol()
 		// make arm move
 		if (master.get_digital(DIGITAL_R2) == 1)
 		{
-			//t_mtr.move(65);
-      if (t_mtr.get_position() > 1650)
-      {
-        t_mtr.move(40);
-      }
-      else if (t_mtr.get_position() < 1650)
-      {
-        t_mtr.move(80);
-      }
-		}
+      t_mtr.moveVelocity(40);
+    }
 		else if (master.get_digital(DIGITAL_L2) == 1)
 		{
-			t_mtr.move(-70);
+			t_mtr.moveVelocity(-70);
 		}
 		else
 		{
-			t_mtr.move(0);
+			t_mtr.moveVelocity(0);
 		}
 
     if (master.get_digital(DIGITAL_B))
     {
-      t_mtr.move(-127);
+      t_mtr.moveVelocity(-100);
     }
 
     //Use Y button to open cartridge
     static bool do_once = true;
-    if ((master.get_digital(DIGITAL_Y) == 1) && do_once)
+    if ((master.get_digital(DIGITAL_Y) == 1) && do_once )
     {
+      t_mtr.move(0);
+      a_mtr.move(0);
+      li_mtr.move(0);
+      ri_mtr.move(0);
+      lf_mtr.move(0);
+      lr_mtr.move(0);
+      rf_mtr.move(0);
+      rr_mtr.move(0);
       t_mtr.move(200);
       pros::delay(800);
       t_mtr.move(0);
@@ -124,6 +120,14 @@ void opcontrol()
       t_mtr.move(200);
       pros::delay(100);
       t_mtr.move(0);
+      t_mtr.move(0);
+      a_mtr.move(0);
+      li_mtr.move(0);
+      ri_mtr.move(0);
+      lf_mtr.move(0);
+      lr_mtr.move(0);
+      rf_mtr.move(0);
+      rr_mtr.move(0);
       do_once = false;
     }
 
@@ -162,7 +166,7 @@ void opcontrol()
 }
 
 
-void arcade_control_3()
+void arcade_control()
 {
   int upwards = master.get_analog(ANALOG_RIGHT_Y);
   int power = master.get_analog(ANALOG_LEFT_Y);
