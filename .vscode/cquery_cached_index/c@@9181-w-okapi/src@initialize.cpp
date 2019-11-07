@@ -31,10 +31,16 @@ double get_proper_gyro()
   return gyro.get() / 10.0 * 0.96749255;
 }
 
-extern okapi::ChassisControllerPID chassis;
+extern okapi::ChassisControllerIntegrated chassis;
 
-void gyro_turn(double angle)
+void gyro_turn(QAngle q_angle)
 {
+  //Comment Out These Three Lines
+  //chassis.turnAngleAsync(q_angle);
+  //chassis.waitUntilSettled();
+  //return;
+
+  double angle = q_angle.convert(degree);
   double target = 0.0;
   double power = 0.0;
   double current = 0.0;
@@ -46,14 +52,13 @@ void gyro_turn(double angle)
   const double ALLOWABLE_ERROR = 1.0;
   const double MAX_SPEED = 0.5;
   const double MIN_SPEED = -0.5;
-  const double LOWEST_MOTOR_SPEED_THAT_STILL_TURNS = 0.1;
-  const double kp = 0.0075;
-  const double kd = 0.0015;
+  const double LOWEST_MOTOR_SPEED_THAT_STILL_TURNS = 0.0;
+  const double kp = 0.0065;
+  const double kd = 0.0005;
 
   //TUNE KP AND KD WHILE LMSTST = 0
   //MAKE SURE THAT GYRO VALUE = 87 - 89
   //TUNE LMSTST
-
 
   gyro.reset();
   target = angle;
@@ -101,13 +106,8 @@ void gyro_turn(double angle)
 
 	}
 	while (abs(error) > ALLOWABLE_ERROR);
-  chassis.arcade(0, 0);
 
-  while (true)
-  {
-        pros::lcd::print(6, "Gyro Value: %f", get_proper_gyro());
-        pros::delay(10);
-  }
+  chassis.arcade(0, 0);
 }
 
 void initialize()

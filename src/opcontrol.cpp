@@ -2,11 +2,6 @@
 #include "okapi/api.hpp"
 using namespace okapi;
 
-//void __sync_synchronize(void) {
-//    __sync_synchronize();
-//}
-//extern "C" void __sync_synchronize() {}
-
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -20,40 +15,33 @@ using namespace okapi;
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-#define LEFT_FRONT_WHEEL_PORT 1
-#define LEFT_REAR_WHEEL_PORT 11
-#define RIGHT_FRONT_WHEEL_PORT 10
-#define RIGHT_REAR_WHEEL_PORT 20
-#define TRAY_MOTOR_PORT 15
-#define ARM_MOTOR_PORT 16
-#define LEFT_INTAKE_MOTOR_PORT 8
-#define RIGHT_INTAKE_MOTOR_PORT 2
 #define SCALE 1.0
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-pros::Motor lf_mtr(LEFT_FRONT_WHEEL_PORT);
-pros::Motor lr_mtr(LEFT_REAR_WHEEL_PORT);
-pros::Motor rf_mtr(RIGHT_FRONT_WHEEL_PORT, true);
-pros::Motor rr_mtr(RIGHT_REAR_WHEEL_PORT, true);
-pros::Motor a_mtr(ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36, true);
-pros::Motor li_mtr(LEFT_INTAKE_MOTOR_PORT);
-pros::Motor ri_mtr(RIGHT_INTAKE_MOTOR_PORT, true);
-okapi::Motor t_mtr(TRAY_MOTOR_PORT,false,AbstractMotor::gearset::red);
 
 // Forward declarations
 void arcade_control();
 
+extern okapi::Motor a_mtr;
+extern okapi::Motor t_mtr;
+extern okapi::Motor li_mtr;
+extern okapi::Motor ri_mtr;
+extern okapi::Motor lf_mtr;
+extern okapi::Motor lr_mtr;
+extern okapi::Motor rf_mtr;
+extern okapi::Motor rr_mtr;
+
 void opcontrol()
 {
 
-  lf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-  lr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-  rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-  rr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+  lf_mtr.setBrakeMode(AbstractMotor::brakeMode::coast);
+  lr_mtr.setBrakeMode(AbstractMotor::brakeMode::coast);
+  rf_mtr.setBrakeMode(AbstractMotor::brakeMode::coast);
+  rr_mtr.setBrakeMode(AbstractMotor::brakeMode::coast);
   t_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
-  a_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  li_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  ri_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  a_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
+  li_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
+  ri_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
 
 	while (true)
 	{

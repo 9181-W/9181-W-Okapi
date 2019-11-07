@@ -50,12 +50,8 @@ using namespace okapi;
 const int POSITIONS[NUMBER_OF_HEIGHTS] =
   {ARM_POSITION_BOTTOM, ALLIANCE_TOWER, SHORT_TOWER, MEDIUM_HIGH_TOWER, ARM_DEPLOY};
 
-extern pros::Motor a_mtr;
-extern pros::Motor t_mtr;
-extern pros::Motor li_mtr;
-extern pros::Motor ri_mtr;
 extern double get_proper_gyro();
-extern void gyro_turn(double angle);
+extern void gyro_turn(QAngle q_angle);
 
 //TRAY PID
 auto tray = AsyncControllerFactory::posIntegrated(TRAY_MOTOR_PORT);
@@ -133,13 +129,10 @@ void deploy()
 }
 
 //CHASSIS PID
-auto chassis = ChassisControllerFactory::create
+okapi::ChassisControllerIntegrated chassis = ChassisControllerFactory::create
 (
   {LEFT_FRONT_WHEEL_PORT, LEFT_REAR_WHEEL_PORT},
   {-RIGHT_FRONT_WHEEL_PORT, -RIGHT_REAR_WHEEL_PORT},
-  IterativePosPIDController::Gains{0.005, 0, 0.0001},
-  IterativePosPIDController::Gains{0.005, 0, 0.0001},
-  IterativePosPIDController::Gains{0.005, 0, 0.0001},
   AbstractMotor::gearset::green,
   {4.0_in, 9_in}
 );
@@ -153,7 +146,7 @@ auto intakes = AsyncControllerFactory::velIntegrated
 void intake_on(double speed = 200.0)
 {
   intakes.setTarget(speed);
-  intakes.waitUntilSettled();
+  //intakes.waitUntilSettled();
 }
 
 void intake_off()
@@ -163,26 +156,21 @@ void intake_off()
   intakes.waitUntilSettled();
 }
 
+okapi::Motor a_mtr(ARM_MOTOR_PORT,true,AbstractMotor::gearset::red);
+okapi::Motor t_mtr(TRAY_MOTOR_PORT,false,AbstractMotor::gearset::red);
+okapi::Motor li_mtr(LEFT_INTAKE_MOTOR_PORT,false,AbstractMotor::gearset::green);
+okapi::Motor ri_mtr(RIGHT_INTAKE_MOTOR_PORT,true,AbstractMotor::gearset::green);
+okapi::Motor lf_mtr(LEFT_FRONT_WHEEL_PORT,false,AbstractMotor::gearset::green);
+okapi::Motor lr_mtr(LEFT_REAR_WHEEL_PORT,false,AbstractMotor::gearset::green);
+okapi::Motor rf_mtr(RIGHT_FRONT_WHEEL_PORT,true,AbstractMotor::gearset::green);
+okapi::Motor rr_mtr(RIGHT_REAR_WHEEL_PORT,true,AbstractMotor::gearset::green);
+
 void autonomous()
 {
-
-  pros::Motor lf_mtr(LEFT_FRONT_WHEEL_PORT);
-  pros::Motor lr_mtr(LEFT_REAR_WHEEL_PORT);
-  pros::Motor rf_mtr(RIGHT_FRONT_WHEEL_PORT, true);
-  pros::Motor rr_mtr(RIGHT_REAR_WHEEL_PORT, true);
-  pros::Motor a_mtr(ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
-  pros::Motor t_mtr(TRAY_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
-  pros::Motor li_mtr(LEFT_INTAKE_MOTOR_PORT);
-  pros::Motor ri_mtr(RIGHT_INTAKE_MOTOR_PORT, true);
-
-  a_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  t_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  li_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  ri_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  rr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  lr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-  lf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  a_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
+  t_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
+  li_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
+  ri_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
 
 //TEST
 
@@ -190,14 +178,16 @@ void autonomous()
   tray_return();
   deploy();
   bottom();
-  chassis.setMaxVelocity(HALF_SPEED);
+
+  chassis.setMaxVelocity(50);
   chassis.moveDistanceAsync(-1_in);
   chassis.waitUntilSettled();
-  chassis.moveDistanceAsync(42_in);
+  chassis.moveDistanceAsync(8_in);
   intake_on(200);
   chassis.waitUntilSettled();
   intake_off();
-  gyro_turn(-15);
+  gyro_turn(-90_deg);
+  chassis.moveDistance(-9_in);
 
   //gyro_turn(90);
   //tray_up();
