@@ -63,11 +63,11 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/initialize.cpp.o",
-            "src\\initialize.cpp"
+            "C:/Users/tlegal/AppData/Local/Temp/tmp2ew2d6q2/opcontrol.cpp.o",
+            "src\\opcontrol.cpp"
         ],
         "directory": "C:\\9181-W-Okapi",
-        "file": "src\\initialize.cpp"
+        "file": "src\\opcontrol.cpp"
     },
     {
         "arguments": [
@@ -98,11 +98,11 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/opcontrol.cpp.o",
-            "src\\opcontrol.cpp"
+            "C:/Users/tlegal/AppData/Local/Temp/tmp2ew2d6q2/initialize.cpp.o",
+            "src\\initialize.cpp"
         ],
         "directory": "C:\\9181-W-Okapi",
-        "file": "src\\opcontrol.cpp"
+        "file": "src\\initialize.cpp"
     },
     {
         "arguments": [

@@ -33,17 +33,22 @@ using namespace okapi;
 #define FORTY_SPEED (40.0)
 #define TWENTY_FIVE_SPEED (25.0)
 
-#define NUMBER_OF_HEIGHTS 4
+//ARM PLACE POSITIONS
+#define NUMBER_OF_HEIGHTS 5
 #define ARM_POSITION_BOTTOM 0
-#define ALLIANCE_TOWER 2000
-#define SHORT_TOWER  4000
+#define ARM_DEPLOY 240
+#define ALLIANCE_TOWER 440
+#define SHORT_TOWER  480
 #define MEDIUM_HIGH_TOWER 6000
+
+//TRAY POSITIONS
 #define TRAY_BOTTOM_POS 0
+#define TRAY_ARM_POS 360
 #define TRAY_PLACE_POS 360
 #define TRAY_SLOW_POS 160
 
 const int POSITIONS[NUMBER_OF_HEIGHTS] =
-  {ARM_POSITION_BOTTOM, ALLIANCE_TOWER, SHORT_TOWER, MEDIUM_HIGH_TOWER};
+  {ARM_POSITION_BOTTOM, ALLIANCE_TOWER, SHORT_TOWER, MEDIUM_HIGH_TOWER, ARM_DEPLOY};
 
 extern pros::Motor a_mtr;
 extern pros::Motor t_mtr;
@@ -59,6 +64,13 @@ void tray_return()
 {
   tray.setMaxVelocity(MAX_SPEED);
   tray.setTarget(TRAY_BOTTOM_POS);
+  tray.waitUntilSettled();
+}
+
+void tray_up()
+{
+  tray.setMaxVelocity(MAX_SPEED);
+  tray.setTarget(TRAY_ARM_POS);
   tray.waitUntilSettled();
 }
 
@@ -114,6 +126,12 @@ void medium_high_tower()
   arm.waitUntilSettled();
 }
 
+void deploy()
+{
+  arm.setTarget(POSITIONS[4]);
+  arm.waitUntilSettled();
+}
+
 //CHASSIS PID
 auto chassis = ChassisControllerFactory::create
 (
@@ -135,17 +153,23 @@ auto intakes = AsyncControllerFactory::velIntegrated
 void intake_on(double speed = 200.0)
 {
   intakes.setTarget(speed);
+  intakes.waitUntilSettled();
 }
 
 void intake_off()
 {
   intakes.setTarget(0);
-  intakes.reset();
+  //intakes.reset();
+  intakes.waitUntilSettled();
 }
 
 void autonomous()
 {
 
+  pros::Motor lf_mtr(LEFT_FRONT_WHEEL_PORT);
+  pros::Motor lr_mtr(LEFT_REAR_WHEEL_PORT);
+  pros::Motor rf_mtr(RIGHT_FRONT_WHEEL_PORT, true);
+  pros::Motor rr_mtr(RIGHT_REAR_WHEEL_PORT, true);
   pros::Motor a_mtr(ARM_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
   pros::Motor t_mtr(TRAY_MOTOR_PORT, pros::E_MOTOR_GEARSET_36);
   pros::Motor li_mtr(LEFT_INTAKE_MOTOR_PORT);
@@ -155,11 +179,32 @@ void autonomous()
   t_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   li_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
   ri_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
-
+  rr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  lr_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+  lf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 
 //TEST
 
-  gyro_turn(-180);
+  tray_up();
+  tray_return();
+  deploy();
+  bottom();
+  chassis.setMaxVelocity(HALF_SPEED);
+  chassis.moveDistanceAsync(-1_in);
+  chassis.waitUntilSettled();
+  chassis.moveDistanceAsync(42_in);
+  intake_on(200);
+  chassis.waitUntilSettled();
+  intake_off();
+  gyro_turn(-15);
+
+  //gyro_turn(90);
+  //tray_up();
+  //short_tower();
+  //intake_on(-100);
+  //pros::delay(1500);
+  //intake_off();
   //chassis.setMaxVelocity(HALF_SPEED);
   //chassis.moveDistanceAsync(7_in);
   //intake_on(200);

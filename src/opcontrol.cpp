@@ -79,7 +79,7 @@ void opcontrol()
 		// make arm move
 		if (master.get_digital(DIGITAL_R2) == 1)
 		{
-      t_mtr.moveVelocity(40);
+      t_mtr.moveVelocity(20);
     }
 		else if (master.get_digital(DIGITAL_L2) == 1)
 		{

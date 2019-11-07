@@ -47,12 +47,13 @@ void gyro_turn(double angle)
   const double MAX_SPEED = 0.5;
   const double MIN_SPEED = -0.5;
   const double LOWEST_MOTOR_SPEED_THAT_STILL_TURNS = 0.1;
-  const double kp = 0.011;
-  const double kd = 0.005;
+  const double kp = 0.0075;
+  const double kd = 0.0015;
 
   //TUNE KP AND KD WHILE LMSTST = 0
-    //MAKE SURE THAT GYRO VALUE = 87 - 89
+  //MAKE SURE THAT GYRO VALUE = 87 - 89
   //TUNE LMSTST
+
 
   gyro.reset();
   target = angle;
