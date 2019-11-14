@@ -64,7 +64,7 @@ void opcontrol()
 			ri_mtr.move(0);
 		}
 
-		// make arm move
+//MAKE TRAY MOVE
 		if (master.get_digital(DIGITAL_R2) == 1)
 		{
       t_mtr.moveVelocity(20);
@@ -78,11 +78,37 @@ void opcontrol()
 			t_mtr.moveVelocity(0);
 		}
 
+    /*
     if (master.get_digital(DIGITAL_B))
     {
       t_mtr.moveVelocity(-100);
     }
+    */
 
+    if (master.get_digital(DIGITAL_X))
+    {
+      t_mtr.move(0);
+      a_mtr.move(0);
+      li_mtr.move(0);
+      ri_mtr.move(0);
+      lf_mtr.move(0);
+      lr_mtr.move(0);
+      rf_mtr.move(0);
+      rr_mtr.move(0);
+      t_mtr.moveVelocity(100);
+      pros::delay(420);
+      t_mtr.move(0);
+      a_mtr.move(0);
+      li_mtr.move(0);
+      ri_mtr.move(0);
+      lf_mtr.move(0);
+      lr_mtr.move(0);
+      rf_mtr.move(0);
+      rr_mtr.move(0);
+    }
+
+
+    /*
     //Use Y button to open cartridge
     static bool do_once = true;
     if ((master.get_digital(DIGITAL_Y) == 1) && do_once )
@@ -95,18 +121,12 @@ void opcontrol()
       lr_mtr.move(0);
       rf_mtr.move(0);
       rr_mtr.move(0);
-      t_mtr.move(200);
-      pros::delay(800);
-      t_mtr.move(0);
-      t_mtr.move(-200);
-      pros::delay(200);
-      a_mtr.move(200);
-      pros::delay(1400);
-      a_mtr.move(0);
-      a_mtr.move(-200);
-      pros::delay(1000);
-      t_mtr.move(200);
-      pros::delay(100);
+
+      t_mtr.move(1400);
+      t_mtr.move(-1400);
+      a_mtr.move(1400);
+      a_mtr.move(-1400);
+
       t_mtr.move(0);
       t_mtr.move(0);
       a_mtr.move(0);
@@ -118,6 +138,7 @@ void opcontrol()
       rr_mtr.move(0);
       do_once = false;
     }
+    */
 
 		//Use buttons to set brake mode or coast
 		if (master.get_digital(DIGITAL_RIGHT) == 1)
