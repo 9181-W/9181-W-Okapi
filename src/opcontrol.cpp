@@ -50,13 +50,13 @@ void opcontrol()
 		//Use buttons to make intake move
 		if (master.get_digital(DIGITAL_R1) == 1)
 		{
-			li_mtr.move(127);
-			ri_mtr.move(127);
+			li_mtr.move(200);
+			ri_mtr.move(200);
 		}
 		else if (master.get_digital(DIGITAL_L1) == 1)
 		{
-			li_mtr.move(-40);
-			ri_mtr.move(-40);
+			li_mtr.move(-70);
+			ri_mtr.move(-70);
 		}
 		else
 		{
@@ -67,23 +67,28 @@ void opcontrol()
 //MAKE TRAY MOVE
 		if (master.get_digital(DIGITAL_R2) == 1)
 		{
-      t_mtr.moveVelocity(20);
+      if (master.get_digital(DIGITAL_Y) == 1)
+      {
+        t_mtr.moveVelocity(10);
+      }
+      else
+      {
+        t_mtr.moveVelocity(25);
+      }
     }
+
 		else if (master.get_digital(DIGITAL_L2) == 1)
 		{
 			t_mtr.moveVelocity(-70);
+
 		}
+
 		else
 		{
 			t_mtr.moveVelocity(0);
 		}
 
-    /*
-    if (master.get_digital(DIGITAL_B))
-    {
-      t_mtr.moveVelocity(-100);
-    }
-    */
+//MAKE TRAY MOVE SLOWER
 
     if (master.get_digital(DIGITAL_X))
     {

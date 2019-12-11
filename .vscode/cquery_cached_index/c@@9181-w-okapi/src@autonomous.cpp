@@ -21,7 +21,7 @@ using namespace okapi;
 #define TRAY_MOTOR_PORT 15
 #define ARM_MOTOR_PORT 16
 #define LEFT_INTAKE_MOTOR_PORT 8
-#define RIGHT_INTAKE_MOTOR_PORT 2
+#define RIGHT_INTAKE_MOTOR_PORT 5
 
 #define MAX_SPEED (200.0)
 #define THREE_QUARTER_SPEED (150.0)
@@ -150,7 +150,7 @@ void intake_on(double speed = 200.0)
   //intakes.waitUntilSettled();
 }
 
-void intake_on_slow(double speed = 130.0)
+void intake_on_slow(double speed = 150.0)
 {
   intakes.setTarget(speed);
   //intakes.waitUntilSettled();
@@ -185,35 +185,44 @@ void autonomous()
 
 //TEST
 
+intake_on(-85);
+pros::delay(1000);
+intake_off();
+gyro_turn_to(0_deg);
+chassis.setMaxVelocity(85);
+intake_on();
+chassis.moveDistanceAsync(40_in);
+chassis.waitUntilSettled();
+pros::delay(400);
+intake_off();
+//gyro_turn_to(0_deg);
+chassis.moveDistanceAsync(6_in);
+intake_on();
+chassis.waitUntilSettled();
+intake_off();
+intake_on();
+pros::delay(400);
+intake_off();
+chassis.moveDistanceAsync(-7_in);
+chassis.waitUntilSettled();
+gyro_turn_to(0_deg);
+gyro_turn_to(25_deg);
+chassis.moveDistanceAsync(11_in);
+intake_on();
+chassis.waitUntilSettled();
+intake_off();
+chassis.moveDistanceAsync(-3_in);
+chassis.waitUntilSettled();
+gyro_turn_to(110_deg);
+chassis.moveDistanceAsync(32_in);
+intake_on();
+chassis.waitUntilSettled();
+intake_off();
+chassis.moveDistanceAsync(6_in);
+nine_cubes();
 
 //SMALL ZONE BLUE --SLOT 1
 /*
-chassis.setMaxVelocity(200);
-chassis.moveDistanceAsync(6_in);
-chassis.waitUntilSettled();
-chassis.moveDistanceAsync(-6_in);
-chassis.waitUntilSettled();
-deploy();
-bottom();
-gyro_turn_to(0_deg);
-chassis.setMaxVelocity(100);
-intake_on();
-chassis.moveDistanceAsync(44_in);
-chassis.waitUntilSettled();
-intake_off();
-chassis.moveDistanceAsync(-26_in);
-chassis.waitUntilSettled();
-gyro_turn_to(130_deg);
-chassis.setMaxVelocity(75);
-chassis.moveDistanceAsync(14_in);
-chassis.waitUntilSettled();
-nine_cubes();
-chassis.moveDistanceAsync(-12_in);
-chassis.waitUntilSettled();
-*/
-
-//SMALL ZONE RED --SLOT 2
-
 chassis.setMaxVelocity(200);
 //chassis.moveDistanceAsync(6_in);
 //chassis.waitUntilSettled();
@@ -221,7 +230,37 @@ chassis.setMaxVelocity(200);
 //chassis.waitUntilSettled();
 deploy();
 bottom();
-gyro_turn_to(0_deg);
+//gyro_turn_to(0_deg);
+chassis.setMaxVelocity(100);
+intake_on();
+chassis.moveDistanceAsync(44_in);
+chassis.waitUntilSettled();
+intake_off();
+chassis.moveDistanceAsync(-20_in);
+chassis.waitUntilSettled();
+gyro_turn_to(-131_deg);
+chassis.setMaxVelocity(75);
+chassis.moveDistanceAsync(16_in);
+chassis.waitUntilSettled();
+intake_on_slow(-90);
+pros::delay(200);
+intake_off();
+nine_cubes();
+chassis.moveDistanceAsync(-12_in);
+chassis.waitUntilSettled();
+*/
+
+//SMALL ZONE RED --SLOT 2
+
+/*
+chassis.setMaxVelocity(200);
+//chassis.moveDistanceAsync(6_in);
+//chassis.waitUntilSettled();
+//chassis.moveDistanceAsync(-6_in);
+//chassis.waitUntilSettled();
+deploy();
+bottom();
+//gyro_turn_to(0_deg);
 chassis.setMaxVelocity(100);
 intake_on();
 chassis.moveDistanceAsync(44_in);
@@ -229,7 +268,7 @@ chassis.waitUntilSettled();
 intake_off();
 chassis.moveDistanceAsync(-26_in);
 chassis.waitUntilSettled();
-gyro_turn_to(131_deg);
+gyro_turn_to(129_deg);
 chassis.setMaxVelocity(75);
 chassis.moveDistanceAsync(14_in);
 chassis.waitUntilSettled();\
@@ -239,6 +278,7 @@ intake_off();
 nine_cubes();
 chassis.moveDistanceAsync(-12_in);
 chassis.waitUntilSettled();
+*/
 
 //LARGE ZONE BLUE --SLOT 3
 
@@ -250,8 +290,8 @@ chassis.setMaxVelocity(200);
 //chassis.waitUntilSettled();
 deploy();
 bottom();
-chassis.moveDistanceAsync(-1_in);
-chassis.waitUntilSettled();
+//chassis.moveDistanceAsync(-1_in);
+//chassis.waitUntilSettled();
 gyro_turn_to(0_deg);
 chassis.setMaxVelocity(115);
 intake_on();
@@ -277,6 +317,7 @@ chassis.waitUntilSettled();
 */
 
 //LARGE ZONE RED --SLOT 4
+
 /*
 chassis.setMaxVelocity(200);
 //chassis.moveDistanceAsync(6_in);
@@ -285,8 +326,9 @@ chassis.setMaxVelocity(200);
 //chassis.waitUntilSettled();
 deploy();
 bottom();
-chassis.moveDistanceAsync(-1_in);
-chassis.waitUntilSettled();
+//chassis.moveDistanceAsync(-1_in);
+//chassis.waitUntilSettled();
+pros::delay(500);
 gyro_turn_to(0_deg);
 chassis.setMaxVelocity(115);
 intake_on();
@@ -297,14 +339,14 @@ intake_off();
 gyro_turn_to(-132_deg);
 chassis.setMaxVelocity(100);
 intake_on_slow();
-chassis.moveDistanceAsync(40.5_in);
+chassis.moveDistanceAsync(39.5_in);
 chassis.waitUntilSettled();
 intake_off();
 intake_on_slow(-90);
 pros::delay(400);
 intake_off();
 nine_cubes();
-chassis.setMaxVelocity(50);
+chassis.setMaxVelocity(25);
 chassis.moveDistanceAsync(2_in);
 chassis.waitUntilSettled();
 chassis.moveDistanceAsync(-12_in);
@@ -430,243 +472,4 @@ chassis.moveDistance(-9_in);
 //gyro_turn(-90_deg);
 //chassis.waitUntilSettled();
 //chassis.moveDistanceAsync(9_in);
-
-
-
-  /*
-  chassis.setMaxVelocity(100);
-  chassis.moveDistanceAsync(7_in);
-  chassis.waitUntilSettled();
-  chassis.moveDistanceAsync(-7_in);
-  chassis.waitUntilSettled();
-  tray_up();
-  tray_return();
-  deploy();
-  bottom();
-  */
-  //chassis.setMaxVelocity(100);
-  //chassis.moveDistanceAsync(-3_in);
-  //chassis.waitUntilSettled();
-  //chassis.moveDistanceAsync(42_in);
-  //intake_on();
-  //chassis.waitUntilSettled();
-  //intake_off();
-  //gyro_turn(-90_deg);
-  //chassis.moveDistanceAsync(8_in);
-  //intake_on();
-  //chassis.waitUntilSettled();
-  //intake_off();
-
-
-
-
-  /*intake_on(200);
-  chassis.waitUntilSettled();
-  intake_off();
-  chassis.moveDistanceAsync(-32_in);
-  chassis.waitUntilSettled();
-  gyro_turn(-90_deg);
-  chassis.moveDistanceAsync(24_in);
-  chassis.waitUntilSettled();
-  gyro_turn(90_deg);
-  chassis.moveDistanceAsync(-8_in);
-  chassis.waitUntilSettled();
-  chassis.moveDistanceAsync(42_in);
-  intake_on(200);
-  chassis.waitUntilSettled();
-  intake_off();
-  chassis.moveDistanceAsync(-32_in);
-  chassis.waitUntilSettled();*/
-
-  /*gyro_turn(32_deg);
-  chassis.setMaxVelocity(100);
-  chassis.moveDistance(-47_in);
-  chassis.waitUntilSettled();
-  //chassis.moveDistance(4_in);
-  //chassis.waitUntilSettled();
-  //chassis.moveDistance(-4_in);
-  //chassis.waitUntilSettled();*/
-  /*chassis.setMaxVelocity(50);
-  chassis.moveDistanceAsync(42_in);
-  intake_on(200);
-  chassis.waitUntilSettled();
-  intake_off();
-  chassis.moveDistanceAsync(-34_in);
-  intake_on(200);
-  chassis.waitUntilSettled();
-  intake_off();*/
-
-
-  //gyro_turn(90);
-  //tray_up();
-  //short_tower();
-  //intake_on(-100);
-  //pros::delay(1500);
-  //intake_off();
-  //chassis.setMaxVelocity(HALF_SPEED);
-  //chassis.moveDistanceAsync(7_in);
-  //intake_on(200);
-  //pros::delay(5000);
-  //chassis.waitUntilSettled();
-  //intake_off();
-  //short_tower();
-  //six_cubes();
-  //tray_return();
-
-//BACK BLUE
-/*
-  chassis.setMaxVelocity(MEGA_MAX_SPEED);
-  t_mtr.move(200);
-  pros::delay(800);
-  t_mtr.move(0);
-  t_mtr.move(-200);
-  pros::delay(200);
-  a_mtr.move(200);
-  pros::delay(1400);
-  a_mtr.move(0);
-  a_mtr.move(-200);
-  pros::delay(1000);
-  t_mtr.move(200);
-  pros::delay(100);
-  t_mtr.move(0);
-  chassis.moveDistanceAsync(40_in);
-  li_mtr.move(200);
-  ri_mtr.move(200);
-  chassis.waitUntilSettled();
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.turnAngle(28_deg);
-  chassis.moveDistanceAsync(8_in);
-  chassis.waitUntilSettled();
-  li_mtr.move(200);
-  ri_mtr.move(200);
-  pros::delay(900);
-  li_mtr.move(0);
-  ri_mtr.move(0);
-  chassis.setMaxVelocity(MAXISH_SPEED);
-  chassis.turnAngle(215_deg);
-  chassis.setMaxVelocity(MEGA_MAX_SPEED);
-  chassis.moveDistanceAsync(37_in);
-  chassis.waitUntilSettled();
-  chassis.turnAngle(15_deg);
-  //chassis.moveDistanceAsync(6_in);
-  //chassis.waitUntilSettled();
-  t_mtr.move(70);
-  pros::delay(2300);
-  t_mtr.move(0);
-  chassis.moveDistanceAsync(-6_in);
-  chassis.waitUntilSettled();
-*/
-//BACK RED
-/*
-    chassis.setMaxVelocity(MEGA_MAX_SPEED);
-    t_mtr.move(200);
-    pros::delay(800);
-    t_mtr.move(0);
-    t_mtr.move(-200);
-    pros::delay(200);
-    a_mtr.move(200);
-    pros::delay(1400);
-    a_mtr.move(0);
-    a_mtr.move(-200);
-    pros::delay(800);
-    t_mtr.move(200);
-    pros::delay(100);
-    t_mtr.move(0);
-    chassis.moveDistanceAsync(40_in);
-    li_mtr.move(200);
-    ri_mtr.move(200);
-    chassis.waitUntilSettled();
-    li_mtr.move(0);
-    ri_mtr.move(0);
-    chassis.turnAngle(-28_deg);
-    chassis.moveDistanceAsync(8_in);
-    chassis.waitUntilSettled();
-    li_mtr.move(200);
-    ri_mtr.move(200);
-    pros::delay(900);
-    li_mtr.move(0);
-    ri_mtr.move(0);
-    chassis.setMaxVelocity(MAXISH_SPEED);
-    chassis.turnAngle(-215_deg);
-    chassis.setMaxVelocity(MEGA_MAX_SPEED);
-    chassis.moveDistanceAsync(36_in);
-    chassis.waitUntilSettled();
-    chassis.turnAngle(-20_deg);
-    //chassis.moveDistanceAsync(6_in);
-    //chassis.waitUntilSettled();
-    t_mtr.move(70);
-    pros::delay(2300);
-    t_mtr.move(0);
-    chassis.moveDistanceAsync(-6_in);
-    chassis.waitUntilSettled();
-*/
-
-
-/*
-//FRONT
-    chassis.setMaxVelocity(MAXER_SPEED);
-    t_mtr.move(200);
-    pros::delay(800);
-    t_mtr.move(0);
-    t_mtr.move(-200);
-    pros::delay(200);
-    a_mtr.move(200);
-    pros::delay(1400);
-    a_mtr.move(0);
-    a_mtr.move(-200);
-    pros::delay(800);
-    t_mtr.move(200);
-    pros::delay(100);
-    t_mtr.move(0);
-    chassis.moveDistanceAsync(-11_in);
-    chassis.waitUntilSettled();
-    chassis.moveDistanceAsync(11_in);
-    chassis.waitUntilSettled();
-*/
-
-//SKILLS
-/*
-chassis.setMaxVelocity(MEGA_MAX_SPEED);
-t_mtr.move(200);
-pros::delay(800);
-t_mtr.move(0);
-t_mtr.move(-200);
-pros::delay(200);
-a_mtr.move(200);
-pros::delay(1400);
-a_mtr.move(0);
-a_mtr.move(-200);
-pros::delay(1000);
-t_mtr.move(200);
-pros::delay(100);
-t_mtr.move(0);
-chassis.moveDistanceAsync(40_in);
-li_mtr.move(200);
-ri_mtr.move(200);
-chassis.waitUntilSettled();
-li_mtr.move(0);
-ri_mtr.move(0);
-chassis.turnAngle(28_deg);
-chassis.moveDistanceAsync(8_in);
-chassis.waitUntilSettled();
-li_mtr.move(200);
-ri_mtr.move(200);
-pros::delay(900);
-li_mtr.move(0);
-ri_mtr.move(0);
-chassis.setMaxVelocity(MAXISH_SPEED);
-chassis.turnAngle(215_deg);
-chassis.setMaxVelocity(MEGA_MAX_SPEED);
-chassis.moveDistanceAsync(36_in);
-chassis.waitUntilSettled();
-chassis.turnAngle(15_deg);
-//chassis.moveDistanceAsync(6_in);
-//chassis.waitUntilSettled();
-t_mtr.move(60);
-pros::delay(2400);
-t_mtr.move(0);
-chassis.moveDistanceAsync(-6_in);
-chassis.waitUntilSettled();
-*/
 }

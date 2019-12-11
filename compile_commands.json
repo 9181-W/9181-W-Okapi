@@ -63,7 +63,7 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/initialize.cpp.o",
+            "C:/Users/tlegal/AppData/Local/Temp/tmp4h33lwvo/initialize.cpp.o",
             "src\\initialize.cpp"
         ],
         "directory": "C:\\9181-W-Okapi",
@@ -98,7 +98,7 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/opcontrol.cpp.o",
+            "C:/Users/tlegal/AppData/Local/Temp/tmp4h33lwvo/opcontrol.cpp.o",
             "src\\opcontrol.cpp"
         ],
         "directory": "C:\\9181-W-Okapi",
