@@ -28,7 +28,7 @@ void initialize()
 {
   pros::lcd::initialize();
   pros::lcd::print(0, "initialize");
-  pros::lcd::print(7, "DO NOT TOUCH ME");
+  pros::lcd::print(4, "DO NOT TOUCH ME");
   pros::lcd::print(5, "GOOD LUCK");
 
   gyro_initialize();

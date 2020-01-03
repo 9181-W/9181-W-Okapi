@@ -60,11 +60,14 @@ const double degrees_per_inch = degrees_per_circ / wheel_circ;
 //void drive(double distance_in_inches, double max_speed)
 void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_speed)
 {
+
     //Chassis arcade takes values from -1 to 1 so this line allows a value from -100 to 100
     max_speed = max_speed / 100;
+    //Sets the encoder units to se degrees instead of ticks
+    chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
 
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
-    const double drive_kp = 0.0027;
+    const double drive_kp = 0.0023;
     const double drive_ki = 0.0002;
     const double drive_kd = 0.0005;
     //Creates a constant for allowable error before stopping
@@ -90,13 +93,14 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
     //Sets last error to zero before driving starts
     double last_error = 0.0;
     //Defines the initial drive error (found in chassisController.cpp on github)
-    double drive_error = static_cast<double>((current_pos_values[0] + current_pos_values[1] +
-                                              current_pos_values[2] + current_pos_values[3])) / 4.0;
+    double drive_error = distance_in_degrees - static_cast<double>((current_pos_values[0] + current_pos_values[1])) / 2.0;
     //Creates a variable that contains the initial gyro value (0)
     gyro_reset();
     double initial_drive_gyro_value = 0.0;
     //Sets the first speed to zero
     double last_speed = 0.0;
+
+    printf("distance: %f  error: %f\n",distance_in_degrees,drive_error);
 
     //Drive while the robot hasn't reached its target distance
     while(fabs(drive_error) > epsilon)
@@ -106,8 +110,10 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
         // ******************************************************************************************************************************* //
 
         //Calculate distance left to drive
-        drive_error = distance_in_degrees - static_cast<double>((current_pos_values[0] + current_pos_values[1] +
-                                                                 current_pos_values[2] + current_pos_values[3])) / 4.0;;
+        drive_error = distance_in_degrees - static_cast<double>((current_pos_values[0] + current_pos_values[1])) / 2.0;;
+
+        printf("distance: %f  error: %f\n",distance_in_degrees,drive_error);
+
         //Calculates the derivative
         double derivative = last_error - drive_error;
         //Sets a new last error
@@ -198,7 +204,8 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
 //Turn x degrees at y speed
 void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed)
 {
-
+    //Sets the encoder units to se degrees instead of ticks
+    chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
     const double turn_kp = 0.90;
     const double turn_ki = 0.0;
