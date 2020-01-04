@@ -7,5 +7,7 @@ using namespace okapi;
 void gyro_initialize();
 void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_speed);
 void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed);
+void gyro_turn_to(okapi::ChassisController& chassis, QAngle angle, double max_speed);
+void gyro_reset();
 
 #endif

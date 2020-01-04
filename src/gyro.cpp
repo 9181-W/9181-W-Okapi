@@ -12,7 +12,7 @@ ADIGyro* gyro_B = NULL;
 //then scales the gyro so that a full turn = 360 degrees
 double get_proper_gyro()
 {
-  return gyro_B->get() / 10.0 * 0.9531;
+  return gyro_B->getRemapped(3600.0, -3600.0) / 10.0 * 0.9531;
 }
 
 void gyro_reset()
@@ -67,11 +67,11 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
 
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
-    const double drive_kp = 0.0023;
-    const double drive_ki = 0.0002;
-    const double drive_kd = 0.0005;
+    const double drive_kp = 0.0018;
+    const double drive_ki = 0.0003;
+    const double drive_kd = 0.0006;
     //Creates a constant for allowable error before stopping
-    const double epsilon = 2.0;
+    const double epsilon = 1.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
     //and have no jerk at the beggining
     const double maximum_vel_adj = 0.05;
@@ -207,11 +207,11 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
     //Sets the encoder units to se degrees instead of ticks
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
-    const double turn_kp = 0.90;
-    const double turn_ki = 0.0;
-    const double turn_kd = 0.0;
+    const double turn_kp = 0.0061;
+    const double turn_ki = 0.0003;
+    const double turn_kd = 0.000;
     //Creates a constant for allowable error before stopping
-    const double turn_epsilon = 1.0;
+    const double turn_epsilon = 2.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
     //and have no jerk at the beggining
     const double turn_maximum_vel_adj = 5.0;
@@ -224,6 +224,7 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
     double start_pos_in_degrees = get_proper_gyro();
     //Calculates current position based on start position
     double current_pos_in_degrees = get_proper_gyro() - start_pos_in_degrees;
+  //  LAST_CURRENT_VALUE
     //Sets the integral to zero so that additions can be made later
     double turn_integral = 0.0;
     //Sets last error to zero before turning starts
@@ -242,8 +243,18 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
         //  This code uses proportional , differential, and integral constants to calculate the best speed to reach the desired distance   //
         // ******************************************************************************************************************************* //
 
+/*
+        IF (CURRENT_POSITION < LAST_POSITION) AND (TARGET_POSITION > LAST_POSITION)
+          TARGET_POSITION = TARGET_POSITION - 360
+        ELSE IF (CURRENT_POSITION > LAST_POSITION) AND (TARGET_POSITION < LAST_POSITION)
+          TARGET_POSITION = TARGET_POSITION + 360
+        LAST_POSITION = CURRENT_POSITION
+*/
+
         //Calculate distance left to turn
         turn_error = distance_in_degrees - current_pos_in_degrees;
+
+        printf("start: %f  distance: %f  current: %f  error: %f\n", start_pos_in_degrees, distance_in_degrees, current_pos_in_degrees, turn_error);
 
         //Calculates the derivative
         double turn_derivative = turn_last_error - turn_error;

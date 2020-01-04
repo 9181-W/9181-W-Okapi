@@ -189,8 +189,20 @@ void autonomous()
   ri_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
   chassis.setBrakeMode(AbstractMotor::brakeMode::brake);
   chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
+  //Resets the gyro so that changes to the position during pre-autonomous do not affect autonomous
+  gyro_reset();
+  gyro_turn_to(chassis, 90_deg, 100);
+  gyro_turn_to(chassis, 90_deg, 100);
+  gyro_turn_to(chassis, 90_deg, 100);
+  gyro_turn_to(chassis, 90_deg, 100);
+  gyro_turn_to(chassis, 90_deg, 100);
 
-  gyro_drive(chassis, 24_in, 100);
+  //intake_on();
+  //pros::delay(1300);
+  //intake_off();
+  //gyro_turn_to(chassis, 0_deg, 100);
+  //gyro_drive(chassis, 10_in, 50);
+  //gyro_turn_to(chassis, -180_deg, 100);
 
   double end_time = pros::c::millis();
   pros::lcd::print(1,"autonomous Time %f",end_time - start_time);
