@@ -12,7 +12,7 @@ ADIGyro* gyro_B = NULL;
 //then scales the gyro so that a full turn = 360 degrees
 double get_proper_gyro()
 {
-  return gyro_B->getRemapped(3600.0, -3600.0) / 10.0 * 0.9531;
+  return gyro_B->getRemapped(3600.0, -3600.0) / 10.0 * 0.9551;
 }
 
 void gyro_reset()
@@ -201,6 +201,53 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
     chassis.stop();
 }
 
+okapi::ChassisController* async_chassis;
+QLength async_distance;
+double async_max_speed;
+bool async_complete = true;
+pros::Task* drive_task = NULL;
+
+void drive_async(void* param)
+{
+  while (true)
+  {
+    if(!async_complete)
+    {
+      gyro_drive(*async_chassis, async_distance, async_max_speed);
+      async_complete = true;
+    }
+    pros::delay(33);
+  }
+}
+
+bool drive_is_complete()
+{
+  return async_complete;
+}
+
+void wait_for_drive_complete()
+{
+  while(!async_complete)
+  {
+    pros::delay(10);
+  }
+}
+
+void async_gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_speed)
+{
+  async_chassis = &chassis;
+  async_distance = distance;
+  async_max_speed = max_speed;
+
+  if (drive_task == NULL)
+  {
+    drive_task = new pros::Task(drive_async, (void*)"PROSDRIVE", TASK_PRIORITY_DEFAULT,
+                                             TASK_STACK_DEPTH_DEFAULT, "Async Drive Task");
+  }
+
+  async_complete = false;
+}
+
 //Turn x degrees at y speed
 void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed)
 {
@@ -224,7 +271,8 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
     double start_pos_in_degrees = get_proper_gyro();
     //Calculates current position based on start position
     double current_pos_in_degrees = get_proper_gyro() - start_pos_in_degrees;
-  //  LAST_CURRENT_VALUE
+    //Sets the initial last pos to zero
+    double last_current_pos_in_degrees = current_pos_in_degrees;
     //Sets the integral to zero so that additions can be made later
     double turn_integral = 0.0;
     //Sets last error to zero before turning starts
@@ -243,13 +291,19 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
         //  This code uses proportional , differential, and integral constants to calculate the best speed to reach the desired distance   //
         // ******************************************************************************************************************************* //
 
-/*
-        IF (CURRENT_POSITION < LAST_POSITION) AND (TARGET_POSITION > LAST_POSITION)
-          TARGET_POSITION = TARGET_POSITION - 360
-        ELSE IF (CURRENT_POSITION > LAST_POSITION) AND (TARGET_POSITION < LAST_POSITION)
-          TARGET_POSITION = TARGET_POSITION + 360
-        LAST_POSITION = CURRENT_POSITION
-*/
+        // This code accounts for the fact that when the robot turns more than 360 degrees in one direction the gyroscope will still read proper values
+        if(((current_pos_in_degrees + 180) < last_current_pos_in_degrees) && (distance_in_degrees > last_current_pos_in_degrees))
+        {
+          distance_in_degrees = distance_in_degrees - 360;
+        }
+
+        else if(((current_pos_in_degrees -180)> last_current_pos_in_degrees) && (distance_in_degrees < last_current_pos_in_degrees))
+        {
+          distance_in_degrees = distance_in_degrees + 360;
+        }
+
+        last_current_pos_in_degrees = current_pos_in_degrees;
+
 
         //Calculate distance left to turn
         turn_error = distance_in_degrees - current_pos_in_degrees;
