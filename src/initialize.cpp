@@ -5,12 +5,7 @@ using namespace okapi;
 
 #define ANALOG_LED_PORT 1
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
+
 void led_fn(void* param)
 {
   //Pwm_out.state(100,vex::percentUnits::pct);
@@ -23,6 +18,13 @@ void led_fn(void* param)
     pros::delay(1000);
   }
 }
+
+/**
+ * Runs initialization code. This occurs as soon as the program is started.
+ *
+ * All other competition modes are blocked by initialize; it is recommended
+ * to keep execution time for this mode under a few seconds.
+ */
 
 void initialize()
 {

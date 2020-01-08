@@ -57,7 +57,7 @@ void opcontrol()
     //Makes the intake move inward
 		if (master.get_digital(DIGITAL_R1) == 1)
 		{
-			li_mtr.move(200);
+			li_mtr.move(193);
 			ri_mtr.move(200);
 		}
     //Makes the intake move outward
