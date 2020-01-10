@@ -192,16 +192,8 @@ void autonomous()
   //Resets the gyro so that changes to the position during pre-autonomous do not affect autonomous
   gyro_reset();
 
-  async_gyro_drive(chassis, 24_in, 100);
-  intake_on();
-  wait_for_drive_complete();
-  intake_off();
-  gyro_turn(chassis, 180_deg, 100);
-  async_gyro_drive(chassis, 24_in, 100);
-  intake_on();
-  wait_for_drive_complete();
-  intake_off();
-  gyro_turn(chassis, 180_deg, 100);
+  //async_gyro_drive(chassis, 48_in, 50);
+  gyro_turn(chassis, 90_deg, 100);
 
   double end_time = pros::c::millis();
   pros::lcd::print(1,"autonomous Time %f",end_time - start_time);

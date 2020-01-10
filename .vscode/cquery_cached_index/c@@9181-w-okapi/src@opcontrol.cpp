@@ -73,6 +73,8 @@ void opcontrol()
 			ri_mtr.move(0);
 		}
 
+
+
 //MAKE TRAY MOVE
 //Makes the tray move upward
 		if (master.get_digital(DIGITAL_R2) == 1)

@@ -67,9 +67,9 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
 
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
-    const double drive_kp = 0.0018;
-    const double drive_ki = 0.0003;
-    const double drive_kd = 0.0006;
+    const double drive_kp = 0.00158;
+    const double drive_ki = 0.0002;
+    const double drive_kd = 0.0005;
     //Creates a constant for allowable error before stopping
     const double epsilon = 1.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
@@ -254,9 +254,9 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
     //Sets the encoder units to se degrees instead of ticks
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
-    const double turn_kp = 0.0061;
-    const double turn_ki = 0.0003;
-    const double turn_kd = 0.000;
+    const double turn_kp = 0.0087;
+    const double turn_ki = 0.00;
+    const double turn_kd = 0.003;
     //Creates a constant for allowable error before stopping
     const double turn_epsilon = 2.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
