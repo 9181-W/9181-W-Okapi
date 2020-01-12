@@ -66,17 +66,22 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
     //Sets the encoder units to se degrees instead of ticks
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
 
-    //Setting the Proportional,Integral,Differential constants (P.I.D.)
+    /*//Setting the Proportional,Integral,Differential constants (P.I.D.)
     const double drive_kp = 0.00158;
     const double drive_ki = 0.0002;
     const double drive_kd = 0.0005;
+    */
+
+    const double drive_kp = 0.0020;
+    const double drive_ki = 0.00008;
+    const double drive_kd = 0.00;
     //Creates a constant for allowable error before stopping
     const double epsilon = 1.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
     //and have no jerk at the beggining
     const double maximum_vel_adj = 0.05;
     //States the window in which the integral will be activated
-    const double integral_limit = 50.0;
+    const double integral_limit = 250.0;
     //Sets the proportional constant for driving straight
     const double drive_straight_kp = 0.05;
 
@@ -112,7 +117,7 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
         //Calculate distance left to drive
         drive_error = distance_in_degrees - static_cast<double>((current_pos_values[0] + current_pos_values[1])) / 2.0;;
 
-        printf("distance: %f  error: %f\n",distance_in_degrees,drive_error);
+        printf("distance: %f  error: %f ",distance_in_degrees,drive_error);
 
         //Calculates the derivative
         double derivative = last_error - drive_error;
@@ -131,13 +136,19 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
                 integral = 0;
             }
         }
-        else
-        {
-            integral = 0;
-        }
 
+        if((integral > 0) && (drive_error < 0))
+        {
+          integral = integral * -1;
+        }
+        else if((integral < 0) && (drive_error > 0))
+        {
+          integral = integral * -1;
+        }
+        
         //Calculate speed to be driven at using kp,ki,kd
         double speed = drive_error * drive_kp + integral * drive_ki + derivative * drive_kd;
+        printf("Speed: %f  (p,i,d): (%f,%f,%f) ",speed,drive_error*drive_kp,integral*drive_ki,derivative*drive_kd);
 
         //Removes impossible speeds by setting the speed down to a possible one
         if(speed > max_speed)
@@ -168,6 +179,7 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
         }
 
         last_speed = speed;
+        printf("adj speed: %f\n",speed);
 
 
         // ****************************************************************************************************************************** //

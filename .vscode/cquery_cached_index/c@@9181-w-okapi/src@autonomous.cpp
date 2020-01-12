@@ -24,7 +24,7 @@ using namespace okapi;
 #define TRAY_MOTOR_PORT 15
 #define ARM_MOTOR_PORT 16
 #define LEFT_INTAKE_MOTOR_PORT 8
-#define RIGHT_INTAKE_MOTOR_PORT 5
+#define RIGHT_INTAKE_MOTOR_PORT 6
 
 #define MAX_SPEED (200.0)
 #define THREE_QUARTER_SPEED (150.0)
@@ -192,8 +192,18 @@ void autonomous()
   //Resets the gyro so that changes to the position during pre-autonomous do not affect autonomous
   gyro_reset();
 
+  async_gyro_drive(chassis, 48_in, 80);
+
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  intake_on(-120);
+  pros::delay(400);
+  intake_off();
+  alliance_tower();
+
   //async_gyro_drive(chassis, 48_in, 50);
-  gyro_turn(chassis, 90_deg, 100);
+  //gyro_turn(chassis, 90_deg, 100);
 
   double end_time = pros::c::millis();
   pros::lcd::print(1,"autonomous Time %f",end_time - start_time);
