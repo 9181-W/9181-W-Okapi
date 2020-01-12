@@ -47,7 +47,7 @@ using namespace okapi;
 //TRAY POSITIONS
 #define TRAY_BOTTOM_POS 0
 #define TRAY_ARM_POS 360
-#define TRAY_PLACE_POS 425
+#define TRAY_PLACE_POS 700
 #define TRAY_SLOW_POS 160
 
 const int POSITIONS[NUMBER_OF_HEIGHTS] =
@@ -59,7 +59,7 @@ auto tray = AsyncControllerFactory::posIntegrated(TRAY_MOTOR_PORT);
 //Different tray positions
 void tray_return()
 {
-  tray.setMaxVelocity(MAX_SPEED);
+  tray.setMaxVelocity(FORTY_SPEED);
   tray.setTarget(TRAY_BOTTOM_POS);
   tray.waitUntilSettled();
 }
@@ -91,13 +91,20 @@ void six_cubes()
 void nine_cubes()
 {
   tray.reset();
-  tray.setMaxVelocity(TWENTY_FIVE_SPEED);
+  tray.setMaxVelocity(FORTY_SPEED);
   tray.setTarget(TRAY_PLACE_POS);
   tray.waitUntilSettled();
 }
 
 //ARM POSITION PID
 auto arm = AsyncControllerFactory::posIntegrated(ARM_MOTOR_PORT);
+
+/*
+void push_down()
+{
+  a_mtr.move(-50);
+}
+*/
 
 //Different arm positions
 void bottom()
@@ -166,6 +173,19 @@ void intake_off()
   //intakes.waitUntilSettled();
 }
 
+void nine_cube_place()
+{
+  intake_on(100);
+  nine_cubes();
+  intake_off();
+  pros::delay(888);
+  tray_return();
+  async_gyro_drive(chassis, -8_in, 20);
+  intake_on(-30);
+  wait_for_drive_complete();
+  intake_off();
+}
+
 //Creates Motors
 okapi::Motor a_mtr(ARM_MOTOR_PORT,true,AbstractMotor::gearset::red);
 okapi::Motor t_mtr(TRAY_MOTOR_PORT,true,AbstractMotor::gearset::red);
@@ -194,7 +214,7 @@ void autonomous()
 
   //gyro_turn(chassis, 45_deg, 80);
 
-
+  //nine_cube_place();
   async_gyro_drive(chassis, 22_in, 80);
   intake_on();
   pros::delay(400);
@@ -208,13 +228,23 @@ void autonomous()
   pros::delay(600);
   intake_off();
   bottom();
-  async_gyro_drive(chassis, -17_in, 80);
+  async_gyro_drive(chassis, -16.25_in, 80);
   wait_for_drive_complete();
   gyro_turn(chassis, 48_deg, 100);
-  async_gyro_drive(chassis, 110_in, 80);
+  async_gyro_drive(chassis, -7_in, 90);
+  wait_for_drive_complete();
+  async_gyro_drive(chassis, 120_in, 60);
   intake_on();
   wait_for_drive_complete();
   intake_off();
+  intake_on();
+  async_gyro_drive(chassis, -7_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, -90_deg, 100);
+  async_gyro_drive(chassis, 14_in, 80);
+  wait_for_drive_complete();
+  intake_off();
+
 
   //async_gyro_drive(chassis, 48_in, 50);
   //gyro_turn(chassis, 90_deg, 100);
