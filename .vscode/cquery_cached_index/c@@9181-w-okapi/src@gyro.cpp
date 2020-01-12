@@ -263,6 +263,9 @@ void async_gyro_drive(okapi::ChassisController& chassis, QLength distance, doubl
 //Turn x degrees at y speed
 void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed)
 {
+
+    //Chassis arcade takes values from -1 to 1 so this line allows a value from -100 to 100
+    max_speed = max_speed / 100;
     //Sets the encoder units to se degrees instead of ticks
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
@@ -270,7 +273,7 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
     const double turn_ki = 0.0002;
     const double turn_kd = 0.0005;
     //Creates a constant for allowable error before stopping
-    const double turn_epsilon = 2.0;
+    const double turn_epsilon = 1.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
     //and have no jerk at the beggining
     const double turn_maximum_vel_adj = 5.0;
@@ -340,14 +343,18 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
                 turn_integral = 0;
             }
         }
-        else
+        if((turn_integral > 0) && (turn_error < 0))
         {
-            turn_integral = 0;
+          turn_integral = turn_integral * -1;
+        }
+        else if((turn_integral < 0) && (turn_error > 0))
+        {
+          turn_integral = turn_integral * -1;
         }
 
         //Calculate speed to be turned at using kp,ki,kd
         double speed = turn_error * turn_kp + turn_integral * turn_ki + turn_derivative * turn_kd;
-        printf("Speed: %f  (p,i,d): (%f,%f,%f) \n",speed,turn_error*turn_kp,turn_integral*turn_ki,turn_derivative*turn_kd);
+        printf("Speed: %f  (p,i,d): (%f,%f,%f) ",speed,turn_error*turn_kp,turn_integral*turn_ki,turn_derivative*turn_kd);
 
         //Removes impossible speeds by setting the speed down to a possible one
         if(speed > max_speed)
@@ -359,6 +366,8 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
         {
             speed = max_speed * -1;
         }
+
+        printf("adj speed: %f\n",speed);
 
         //Setting the desired speed in a percent form and waiting 10 milliseconds
         chassis.arcade(0.0, speed);

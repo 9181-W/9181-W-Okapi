@@ -192,9 +192,9 @@ void autonomous()
   //Resets the gyro so that changes to the position during pre-autonomous do not affect autonomous
   gyro_reset();
 
-  gyro_turn(chassis, 180_deg, 80);
+  //gyro_turn(chassis, 45_deg, 80);
 
-  /*
+
   async_gyro_drive(chassis, 22_in, 80);
   intake_on();
   pros::delay(400);
@@ -208,10 +208,13 @@ void autonomous()
   pros::delay(600);
   intake_off();
   bottom();
-  async_gyro_drive(chassis, -16_in, 80);
+  async_gyro_drive(chassis, -17_in, 80);
   wait_for_drive_complete();
-  gyro_turn(chassis, 45_deg, 100);
-  */
+  gyro_turn(chassis, 48_deg, 100);
+  async_gyro_drive(chassis, 110_in, 80);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
 
   //async_gyro_drive(chassis, 48_in, 50);
   //gyro_turn(chassis, 90_deg, 100);
