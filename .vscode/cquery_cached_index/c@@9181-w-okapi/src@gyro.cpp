@@ -72,14 +72,14 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
     const double drive_kd = 0.0005;
     */
 
-    const double drive_kp = 0.0020;
+    const double drive_kp = 0.0018;
     const double drive_ki = 0.00008;
-    const double drive_kd = 0.00;
+    const double drive_kd = 0.0001;
     //Creates a constant for allowable error before stopping
     const double epsilon = 1.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
     //and have no jerk at the beggining
-    const double maximum_vel_adj = 0.05;
+    const double maximum_vel_adj = 0.1;
     //States the window in which the integral will be activated
     const double integral_limit = 250.0;
     //Sets the proportional constant for driving straight
@@ -145,7 +145,7 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
         {
           integral = integral * -1;
         }
-        
+
         //Calculate speed to be driven at using kp,ki,kd
         double speed = drive_error * drive_kp + integral * drive_ki + derivative * drive_kd;
         printf("Speed: %f  (p,i,d): (%f,%f,%f) ",speed,drive_error*drive_kp,integral*drive_ki,derivative*drive_kd);
@@ -266,9 +266,9 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
     //Sets the encoder units to se degrees instead of ticks
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
-    const double turn_kp = 0.0087;
-    const double turn_ki = 0.00;
-    const double turn_kd = 0.003;
+    const double turn_kp = 0.0080;
+    const double turn_ki = 0.0002;
+    const double turn_kd = 0.0005;
     //Creates a constant for allowable error before stopping
     const double turn_epsilon = 2.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
@@ -320,7 +320,7 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
         //Calculate distance left to turn
         turn_error = distance_in_degrees - current_pos_in_degrees;
 
-        printf("start: %f  distance: %f  current: %f  error: %f\n", start_pos_in_degrees, distance_in_degrees, current_pos_in_degrees, turn_error);
+        printf("start: %f  distance: %f  current: %f  error: %f ", start_pos_in_degrees, distance_in_degrees, current_pos_in_degrees, turn_error);
 
         //Calculates the derivative
         double turn_derivative = turn_last_error - turn_error;
@@ -347,6 +347,7 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
 
         //Calculate speed to be turned at using kp,ki,kd
         double speed = turn_error * turn_kp + turn_integral * turn_ki + turn_derivative * turn_kd;
+        printf("Speed: %f  (p,i,d): (%f,%f,%f) \n",speed,turn_error*turn_kp,turn_integral*turn_ki,turn_derivative*turn_kd);
 
         //Removes impossible speeds by setting the speed down to a possible one
         if(speed > max_speed)

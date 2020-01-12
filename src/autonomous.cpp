@@ -40,7 +40,7 @@ using namespace okapi;
 #define NUMBER_OF_HEIGHTS 5
 #define ARM_POSITION_BOTTOM 0
 #define ARM_DEPLOY 240
-#define ALLIANCE_TOWER 440
+#define ALLIANCE_TOWER 460
 #define SHORT_TOWER  480
 #define MEDIUM_HIGH_TOWER 550
 
@@ -192,15 +192,26 @@ void autonomous()
   //Resets the gyro so that changes to the position during pre-autonomous do not affect autonomous
   gyro_reset();
 
-  async_gyro_drive(chassis, 48_in, 80);
+  gyro_turn(chassis, 180_deg, 80);
 
+  /*
+  async_gyro_drive(chassis, 22_in, 80);
   intake_on();
-  wait_for_drive_complete();
-  intake_off();
-  intake_on(-120);
   pros::delay(400);
   intake_off();
+  //intake_on(-120);
+  //pros::delay(400);
+  //intake_off();
   alliance_tower();
+  wait_for_drive_complete();
+  intake_on(-120);
+  pros::delay(600);
+  intake_off();
+  bottom();
+  async_gyro_drive(chassis, -16_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 45_deg, 100);
+  */
 
   //async_gyro_drive(chassis, 48_in, 50);
   //gyro_turn(chassis, 90_deg, 100);
