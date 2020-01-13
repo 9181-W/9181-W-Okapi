@@ -45,7 +45,7 @@ using namespace okapi;
 #define MEDIUM_HIGH_TOWER 550
 
 //TRAY POSITIONS
-#define TRAY_BOTTOM_POS 0
+#define TRAY_BOTTOM_POS -30
 #define TRAY_ARM_POS 360
 #define TRAY_PLACE_POS 700
 #define TRAY_SLOW_POS 160
@@ -109,6 +109,7 @@ void push_down()
 //Different arm positions
 void bottom()
 {
+  arm.setMaxVelocity(100);
   arm.setTarget(POSITIONS[0]);
   //arm.waitUntilSettled();
 }
@@ -181,7 +182,7 @@ void nine_cube_place()
   pros::delay(888);
   tray_return();
   async_gyro_drive(chassis, -8_in, 20);
-  intake_on(-30);
+  intake_on(-40);
   wait_for_drive_complete();
   intake_off();
 }
@@ -215,7 +216,7 @@ void autonomous()
   //gyro_turn(chassis, 45_deg, 80);
 
   //nine_cube_place();
-  async_gyro_drive(chassis, 22_in, 80);
+  async_gyro_drive(chassis, 21.5_in, 80);
   intake_on();
   pros::delay(400);
   intake_off();
@@ -228,7 +229,11 @@ void autonomous()
   pros::delay(600);
   intake_off();
   bottom();
-  async_gyro_drive(chassis, -16.25_in, 80);
+  async_gyro_drive(chassis, -15.5_in, 80);
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
   wait_for_drive_complete();
   gyro_turn(chassis, 48_deg, 100);
   async_gyro_drive(chassis, -7_in, 90);
@@ -238,12 +243,20 @@ void autonomous()
   wait_for_drive_complete();
   intake_off();
   intake_on();
-  async_gyro_drive(chassis, -7_in, 80);
+  async_gyro_drive(chassis, -5_in, 80);
   wait_for_drive_complete();
-  gyro_turn(chassis, -90_deg, 100);
-  async_gyro_drive(chassis, 14_in, 80);
+  gyro_turn(chassis, -90_deg, 90);
+  async_gyro_drive(chassis, 13_in, 80);
   wait_for_drive_complete();
-  intake_off();
+  async_gyro_drive(chassis, -5.5_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 45_deg, 100);
+  async_gyro_drive(chassis, 12.5_in, 80);
+  wait_for_drive_complete();
+  nine_cube_place();
+  gyro_turn(chassis, 135_deg, 100);
+  
+
 
 
   //async_gyro_drive(chassis, 48_in, 50);
