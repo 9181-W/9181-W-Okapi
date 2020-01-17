@@ -61,19 +61,26 @@ void opcontrol()
 			ri_mtr.move(200);
 		}
     //Makes the intake move outward
+    /*
 		else if (master.get_digital(DIGITAL_L1) == 1)
 		{
 			li_mtr.move(-50);
 			ri_mtr.move(-50);
 		}
+    */
+
+    //SKILLS
+    else if (master.get_digital(DIGITAL_L1) == 1)
+    {
+      li_mtr.move(-60);
+      ri_mtr.move(-60);
+    }
     //Makes the intakes not move while no button is being pressed
 		else
 		{
 			li_mtr.move(0);
 			ri_mtr.move(0);
 		}
-
-
 
 //MAKE TRAY MOVE
 //Makes the tray move upward

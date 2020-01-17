@@ -42,12 +42,12 @@ using namespace okapi;
 #define ARM_DEPLOY 240
 #define ALLIANCE_TOWER 460
 #define SHORT_TOWER  480
-#define MEDIUM_HIGH_TOWER 550
+#define MEDIUM_HIGH_TOWER 600
 
 //TRAY POSITIONS
 #define TRAY_BOTTOM_POS -30
 #define TRAY_ARM_POS 360
-#define TRAY_PLACE_POS 700
+#define TRAY_PLACE_POS 720
 #define TRAY_SLOW_POS 160
 
 const int POSITIONS[NUMBER_OF_HEIGHTS] =
@@ -59,7 +59,7 @@ auto tray = AsyncControllerFactory::posIntegrated(TRAY_MOTOR_PORT);
 //Different tray positions
 void tray_return()
 {
-  tray.setMaxVelocity(FORTY_SPEED);
+  tray.setMaxVelocity(NINETY_SPEED);
   tray.setTarget(TRAY_BOTTOM_POS);
   tray.waitUntilSettled();
 }
@@ -179,9 +179,9 @@ void nine_cube_place()
   intake_on(100);
   nine_cubes();
   intake_off();
-  pros::delay(888);
+  pros::delay(500);
   tray_return();
-  async_gyro_drive(chassis, -8_in, 20);
+  async_gyro_drive(chassis, -7.75_in, 20);
   intake_on(-40);
   wait_for_drive_complete();
   intake_off();
@@ -213,51 +213,134 @@ void autonomous()
   //Resets the gyro so that changes to the position during pre-autonomous do not affect autonomous
   gyro_reset();
 
-  //gyro_turn(chassis, 45_deg, 80);
-
-  //nine_cube_place();
-  async_gyro_drive(chassis, 21.5_in, 80);
+  intake_on(-60);
+  a_mtr.move(60);
+  pros::delay(1000);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  async_gyro_drive(chassis, 20_in, 80);
   intake_on();
   pros::delay(400);
   intake_off();
-  //intake_on(-120);
-  //pros::delay(400);
-  //intake_off();
   alliance_tower();
   wait_for_drive_complete();
-  intake_on(-120);
+  intake_on(-200);
   pros::delay(600);
   intake_off();
   bottom();
-  async_gyro_drive(chassis, -15.5_in, 80);
+  pros::delay(500);
+  async_gyro_drive(chassis, -9.75_in, 80);
   arm.waitUntilSettled();
   a_mtr.move(-100);
   pros::delay(400);
   a_mtr.move(0);
   wait_for_drive_complete();
-  gyro_turn(chassis, 48_deg, 100);
-  async_gyro_drive(chassis, -7_in, 90);
+  gyro_turn(chassis, 47_deg);
+  async_gyro_drive(chassis, -12_in, 90);
   wait_for_drive_complete();
-  async_gyro_drive(chassis, 120_in, 60);
+  async_gyro_drive(chassis, 123_in, 45);
   intake_on();
   wait_for_drive_complete();
   intake_off();
   intake_on();
   async_gyro_drive(chassis, -5_in, 80);
   wait_for_drive_complete();
-  gyro_turn(chassis, -90_deg, 90);
+  gyro_turn(chassis, -90_deg, 100, 22.5);
   async_gyro_drive(chassis, 13_in, 80);
   wait_for_drive_complete();
-  async_gyro_drive(chassis, -5.5_in, 80);
+  gyro_reset();
+  async_gyro_drive(chassis, -6_in, 80);
   wait_for_drive_complete();
-  gyro_turn(chassis, 45_deg, 100);
+  gyro_turn(chassis, 43_deg, 100, 22.5);
   async_gyro_drive(chassis, 12.5_in, 80);
   wait_for_drive_complete();
   nine_cube_place();
-  gyro_turn(chassis, 135_deg, 100);
-  
+  gyro_turn(chassis, 134_deg);
+  async_gyro_drive(chassis, 32_in, 50);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  async_gyro_drive(chassis, -4_in, 60);
+  intake_on(-40);
+  wait_for_drive_complete();
+  intake_off();
+  medium_high_tower();
+  async_gyro_drive(chassis, 8_in, 60);
+  wait_for_drive_complete();
+  intake_on(-200);
+  pros::delay(800);
+  intake_off();
+  gyro_turn_to(chassis, 0_deg);
+  async_gyro_drive(chassis, -3.75_in, 60);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 90_deg);
+  async_gyro_drive(chassis, -19_in, 60);
+  bottom();
+  wait_for_drive_complete();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  async_gyro_drive(chassis, 17_in, 60);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, 69_deg);
+  async_gyro_drive(chassis, 29_in, 60);
+  alliance_tower();
+  wait_for_drive_complete();
+  intake_on(-200);
+  pros::delay(600);
+  intake_off();
+  async_gyro_drive(chassis, -15_in, 60);
+  wait_for_drive_complete();
+  gyro_turn(chassis, -69_deg);
+  async_gyro_drive(chassis, -23_in, 60);
+  bottom();
+  wait_for_drive_complete();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  async_gyro_drive(chassis, 46_in, 50);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  async_gyro_drive(chassis, -4_in, 60);
+  intake_on(-40);
+  wait_for_drive_complete();
+  intake_off();
+  alliance_tower();
+  async_gyro_drive(chassis, 2_in, 60);
+  wait_for_drive_complete();
+  intake_on(-200);
+  pros::delay(800);
+  intake_off();
 
-
+  return;
+  gyro_turn(chassis, 90_deg);
+  async_gyro_drive(chassis, -24_in, 60);
+  wait_for_drive_complete();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  async_gyro_drive(chassis, 46_in, 50);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  async_gyro_drive(chassis, -4_in, 60);
+  intake_on(-40);
+  wait_for_drive_complete();
+  intake_off();
+  alliance_tower();
+  async_gyro_drive(chassis, 3_in, 60);
+  wait_for_drive_complete();
+  intake_on(-180);
+  pros::delay(600);
+  intake_off();
 
   //async_gyro_drive(chassis, 48_in, 50);
   //gyro_turn(chassis, 90_deg, 100);

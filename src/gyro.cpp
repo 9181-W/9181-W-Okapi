@@ -287,20 +287,23 @@ void async_gyro_drive(okapi::ChassisController& chassis, QLength distance, doubl
 }
 
 //Turn x degrees at y speed
-void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed)
+void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed, double min_speed)
 {
 
     //Chassis arcade takes values from -1 to 1 so this line allows a value from -100 to 100
     if (max_speed > 60) max_speed = 60;
     max_speed = max_speed / 100;
+    if (min_speed < 17.5) min_speed = 17.5;
+    min_speed = min_speed / 100;
+
     //Sets the encoder units to se degrees instead of ticks
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
-    const double turn_kp = 0.009;
+    const double turn_kp = 0.011;
     const double turn_ki = 0.000;
     const double turn_kd = 0.000;
     //Creates a constant for allowable error before stopping
-    const double turn_epsilon = 1.0;
+    const double turn_epsilon = 2.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
     //and have no jerk at the beggining
     const double turn_maximum_vel_adj = 5.0;
@@ -340,7 +343,7 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
     //double last_speed = 0.0;
 
     //Keep turning while the robot hasn't reached its target distance
-    while ((fabs(last_three_turn_derivatives) > turn_epsilon) || (fabs(turn_error) > turn_epsilon))
+    while ((fabs(last_three_turn_derivatives) > turn_epsilon) || (fabs(turn_error) > turn_epsilon*2.0))
     {
         // ******************************************************************************************************************************* //
         //  This code uses proportional , differential, and integral constants to calculate the best speed to reach the desired distance   //
@@ -423,13 +426,13 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
             speed = max_speed * -1;
         }
 
-        if ((speed > 0) && (speed < 0.20))
+        if ((speed > 0) && (speed < min_speed))
         {
-          speed = 0.20;
+          speed = min_speed;
         }
-        if ((speed < 0) && (speed > -0.20))
+        if ((speed < 0) && (speed > -min_speed))
         {
-          speed = -0.20;
+          speed = -min_speed;
         }
 
         printf("adj speed: %f\n",speed);
@@ -447,9 +450,9 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
 }
 
 
-void gyro_turn_to(okapi::ChassisController& chassis, QAngle angle, double max_speed)
+void gyro_turn_to(okapi::ChassisController& chassis, QAngle angle, double max_speed, double min_speed)
 {
     double new_turn = angle.convert(degree) - get_proper_gyro();
     QAngle new_angle = new_turn * degree;
-    gyro_turn(chassis, new_angle, max_speed);
+    gyro_turn(chassis, new_angle, max_speed, 17.5);
 }
