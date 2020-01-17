@@ -223,6 +223,22 @@ void autonomous()
   pros::delay(400);
   a_mtr.move(0);
   intake_off();
+  async_gyro_drive(chassis, 48_in, 55);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+
+/*
+  intake_on(-60);
+  a_mtr.move(60);
+  pros::delay(1000);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
   async_gyro_drive(chassis, 20_in, 80);
   intake_on();
   pros::delay(400);
@@ -241,7 +257,7 @@ void autonomous()
   a_mtr.move(0);
   wait_for_drive_complete();
   gyro_turn(chassis, 47_deg);
-  async_gyro_drive(chassis, -12_in, 90);
+  async_gyro_drive(chassis, -13_in, 90);
   wait_for_drive_complete();
   async_gyro_drive(chassis, 123_in, 45);
   intake_on();
@@ -256,11 +272,11 @@ void autonomous()
   gyro_reset();
   async_gyro_drive(chassis, -6_in, 80);
   wait_for_drive_complete();
-  gyro_turn(chassis, 43_deg, 100, 22.5);
+  gyro_turn(chassis, 44.5_deg, 100, 22.5);
   async_gyro_drive(chassis, 12.5_in, 80);
   wait_for_drive_complete();
   nine_cube_place();
-  gyro_turn(chassis, 134_deg);
+  gyro_turn(chassis, 136.5_deg);
   async_gyro_drive(chassis, 32_in, 50);
   intake_on();
   wait_for_drive_complete();
@@ -279,7 +295,7 @@ void autonomous()
   async_gyro_drive(chassis, -3.75_in, 60);
   wait_for_drive_complete();
   gyro_turn(chassis, 90_deg);
-  async_gyro_drive(chassis, -19_in, 60);
+  async_gyro_drive(chassis, -21_in, 60);
   bottom();
   wait_for_drive_complete();
   a_mtr.move(-100);
@@ -289,17 +305,17 @@ void autonomous()
   intake_on();
   wait_for_drive_complete();
   intake_off();
-  gyro_turn(chassis, 69_deg);
-  async_gyro_drive(chassis, 29_in, 60);
+  gyro_turn(chassis, 76_deg);
+  async_gyro_drive(chassis, 31_in, 60);
   alliance_tower();
   wait_for_drive_complete();
   intake_on(-200);
   pros::delay(600);
   intake_off();
-  async_gyro_drive(chassis, -15_in, 60);
+  async_gyro_drive(chassis, -17_in, 60);
   wait_for_drive_complete();
-  gyro_turn(chassis, -69_deg);
-  async_gyro_drive(chassis, -23_in, 60);
+  gyro_turn(chassis, -76_deg);
+  async_gyro_drive(chassis, -25_in, 60);
   bottom();
   wait_for_drive_complete();
   a_mtr.move(-100);
@@ -319,28 +335,7 @@ void autonomous()
   intake_on(-200);
   pros::delay(800);
   intake_off();
-
-  return;
-  gyro_turn(chassis, 90_deg);
-  async_gyro_drive(chassis, -24_in, 60);
-  wait_for_drive_complete();
-  a_mtr.move(-100);
-  pros::delay(400);
-  a_mtr.move(0);
-  async_gyro_drive(chassis, 46_in, 50);
-  intake_on();
-  wait_for_drive_complete();
-  intake_off();
-  async_gyro_drive(chassis, -4_in, 60);
-  intake_on(-40);
-  wait_for_drive_complete();
-  intake_off();
-  alliance_tower();
-  async_gyro_drive(chassis, 3_in, 60);
-  wait_for_drive_complete();
-  intake_on(-180);
-  pros::delay(600);
-  intake_off();
+*/
 
   //async_gyro_drive(chassis, 48_in, 50);
   //gyro_turn(chassis, 90_deg, 100);

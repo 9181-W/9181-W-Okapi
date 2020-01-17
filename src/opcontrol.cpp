@@ -102,7 +102,6 @@ void opcontrol()
 		else if (master.get_digital(DIGITAL_L2) == 1)
 		{
 			t_mtr.moveVelocity(-70);
-
 		}
 
     //Makes sure the tray doesn't move when no button is pressed
@@ -185,6 +184,7 @@ void opcontrol()
     {
       printf("Right not pressed");
     }
+
 		if (master.get_digital(DIGITAL_DOWN) == 1)
 		{
 			printf("Press DOWN");
