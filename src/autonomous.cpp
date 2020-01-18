@@ -64,6 +64,13 @@ void tray_return()
   tray.waitUntilSettled();
 }
 
+void tray_return_fast()
+{
+  tray.setMaxVelocity(MAX_SPEED);
+  tray.setTarget(TRAY_BOTTOM_POS);
+  tray.waitUntilSettled();
+}
+
 void tray_up()
 {
   tray.setMaxVelocity(MAX_SPEED);
@@ -77,13 +84,12 @@ void three_cubes()
   tray.setMaxVelocity(FORTY_SPEED);
   tray.setTarget(TRAY_PLACE_POS);
   tray.waitUntilSettled();
-
 }
 
 void six_cubes()
 {
   tray.reset();
-  tray.setMaxVelocity(FORTY_SPEED);
+  tray.setMaxVelocity(SIXTY_SPEED);
   tray.setTarget(TRAY_PLACE_POS);
   tray.waitUntilSettled();
 }
@@ -161,12 +167,6 @@ void intake_on(double speed = 180.0)
   //intakes.waitUntilSettled();
 }
 
-void intake_on_slow(double speed = 150.0)
-{
-  intakes.setTarget(speed);
-  //intakes.waitUntilSettled();
-}
-
 void intake_off()
 {
   intakes.setTarget(0);
@@ -181,6 +181,19 @@ void nine_cube_place()
   intake_off();
   pros::delay(500);
   tray_return();
+  async_gyro_drive(chassis, -7.75_in, 20);
+  intake_on(-40);
+  wait_for_drive_complete();
+  intake_off();
+}
+
+void seven_cube_place()
+{
+  intake_on(16);
+  six_cubes();
+  intake_off();
+  pros::delay(500);
+  tray_return_fast();
   async_gyro_drive(chassis, -7.75_in, 20);
   intake_on(-40);
   wait_for_drive_complete();
@@ -213,6 +226,41 @@ void autonomous()
   //Resets the gyro so that changes to the position during pre-autonomous do not affect autonomous
   gyro_reset();
 
+//RED BACK
+  intake_on(-60);
+  a_mtr.move(60);
+  pros::delay(1000);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  async_gyro_drive(chassis, 3_in, 55);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, -90_deg, 100, 22.5);
+  async_gyro_drive(chassis, 14_in, 55);
+  intake_on(-70);
+  wait_for_drive_complete();
+  intake_off();
+  intake_on(-70);
+  pros::delay(500);
+  intake_off();
+  async_gyro_drive(chassis, -4_in, 55);
+  intake_on(-70);
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, 90_deg, 100, 22.5);
+  async_gyro_drive(chassis, 12_in, 55);
+  intake_on(200);
+  wait_for_drive_complete();
+  intake_off();
+
+//RED FRONT
+/*
   intake_on(-60);
   a_mtr.move(60);
   pros::delay(1000);
@@ -227,7 +275,50 @@ void autonomous()
   intake_on();
   wait_for_drive_complete();
   intake_off();
+  intake_on();
+  pros::delay(500);
+  intake_off();
+  async_gyro_drive(chassis, -30_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 130_deg, 100, 22.5);
+  async_gyro_drive(chassis, 16_in, 80);
+  intake_on(-30);
+  wait_for_drive_complete();
+  intake_off();
+  seven_cube_place();
+  */
 
+
+  //BLUE FRONT
+  /*
+  intake_on(-60);
+  a_mtr.move(60);
+  pros::delay(1000);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  async_gyro_drive(chassis, 48_in, 55);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  intake_on();
+  pros::delay(500);
+  intake_off();
+  async_gyro_drive(chassis, -30_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, -130_deg, 100, 22.5);
+  async_gyro_drive(chassis, 16_in, 80);
+  intake_on(-30);
+  wait_for_drive_complete();
+  intake_off();
+  seven_cube_place();
+*/
+
+//SKILLS
 /*
   intake_on(-60);
   a_mtr.move(60);
