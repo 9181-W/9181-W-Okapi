@@ -63,7 +63,7 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
 
     //Chassis arcade takes values from -1 to 1 so this line allows a value from -100 to 100
     max_speed = max_speed / 100;
-    //Sets the encoder units to se degrees instead of ticks
+    //Sets the encoder units to use degrees instead of ticks
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
 
     /*//Setting the Proportional,Integral,Differential constants (P.I.D.)

@@ -61,20 +61,20 @@ void opcontrol()
 			ri_mtr.move(200);
 		}
     //Makes the intake move outward
-    /*
 		else if (master.get_digital(DIGITAL_L1) == 1)
 		{
-			li_mtr.move(-50);
-			ri_mtr.move(-50);
+      if (master.get_digital(DIGITAL_L2) == 1)
+      {
+        li_mtr.move(-50);
+        ri_mtr.move(-50);
+      }
+      else
+      {
+			   li_mtr.move(-75);
+			   ri_mtr.move(-75);
+      }
 		}
-    */
 
-    //SKILLS
-    else if (master.get_digital(DIGITAL_L1) == 1)
-    {
-      li_mtr.move(-60);
-      ri_mtr.move(-60);
-    }
     //Makes the intakes not move while no button is being pressed
 		else
 		{
@@ -122,8 +122,18 @@ void opcontrol()
       lr_mtr.move(0);
       rf_mtr.move(0);
       rr_mtr.move(0);
-      t_mtr.moveVelocity(100);
-      pros::delay(420);
+
+      li_mtr.move(-40);
+      ri_mtr.move(-40);
+      pros::delay(600);
+      li_mtr.move(0);
+      ri_mtr.move(0);
+
+      a_mtr.move(80);
+      pros::delay(600);
+      a_mtr.move(0);
+
+
       t_mtr.move(0);
       a_mtr.move(0);
       li_mtr.move(0);
@@ -133,7 +143,6 @@ void opcontrol()
       rf_mtr.move(0);
       rr_mtr.move(0);
     }
-
 
     /*
     //Use Y button to open cartridge
