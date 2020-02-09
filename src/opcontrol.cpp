@@ -57,16 +57,16 @@ void opcontrol()
     //Makes the intake move inward
 		if (master.get_digital(DIGITAL_R1) == 1)
 		{
-			li_mtr.move(193);
-			ri_mtr.move(200);
+			li_mtr.moveVelocity(200);
+			ri_mtr.moveVelocity(200);
 		}
     //Makes the intake move outward
 		else if (master.get_digital(DIGITAL_L1) == 1)
 		{
       if (master.get_digital(DIGITAL_L2) == 1)
       {
-        li_mtr.move(-50);
-        ri_mtr.move(-50);
+        li_mtr.move(-45);
+        ri_mtr.move(-45);
       }
       else
       {
@@ -87,9 +87,9 @@ void opcontrol()
 		if (master.get_digital(DIGITAL_R2) == 1)
 		{
       //Makes the tray move slower for accuracy
-      if (master.get_digital(DIGITAL_Y) == 1)
+      if (master.get_digital(DIGITAL_X) == 1)
       {
-        t_mtr.moveVelocity(20);
+        t_mtr.moveVelocity(80);
       }
       //Makes the tray move at a speed needed for most time
       else
@@ -101,7 +101,15 @@ void opcontrol()
     //Makes the tray move in reverse
 		else if (master.get_digital(DIGITAL_L2) == 1)
 		{
-			t_mtr.moveVelocity(-70);
+      if (master.get_digital(DIGITAL_A) == 1)
+      {
+			     t_mtr.moveVelocity(-100);
+      }
+      else
+      {
+        t_mtr.moveVelocity(-70);
+      }
+
 		}
 
     //Makes sure the tray doesn't move when no button is pressed
@@ -110,39 +118,6 @@ void opcontrol()
 			t_mtr.moveVelocity(0);
 		}
 
-
-    //Makes the tray move to a certain position so that the arm can be lifted
-    if (master.get_digital(DIGITAL_X))
-    {
-      t_mtr.move(0);
-      a_mtr.move(0);
-      li_mtr.move(0);
-      ri_mtr.move(0);
-      lf_mtr.move(0);
-      lr_mtr.move(0);
-      rf_mtr.move(0);
-      rr_mtr.move(0);
-
-      li_mtr.move(-40);
-      ri_mtr.move(-40);
-      pros::delay(600);
-      li_mtr.move(0);
-      ri_mtr.move(0);
-
-      a_mtr.move(80);
-      pros::delay(600);
-      a_mtr.move(0);
-
-
-      t_mtr.move(0);
-      a_mtr.move(0);
-      li_mtr.move(0);
-      ri_mtr.move(0);
-      lf_mtr.move(0);
-      lr_mtr.move(0);
-      rf_mtr.move(0);
-      rr_mtr.move(0);
-    }
 
     /*
     //Use Y button to open cartridge

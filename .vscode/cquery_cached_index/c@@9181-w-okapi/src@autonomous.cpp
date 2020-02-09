@@ -49,7 +49,7 @@ using namespace okapi;
 #define TRAY_ARM_POS 360
 #define TRAY_PLACE_POS 720
 #define TRAY_SLOW_POS 160
-#define TRAY_TEST_POS 360
+#define TRAY_TEST_POS 650
 
 const int POSITIONS[NUMBER_OF_HEIGHTS] =
   {ARM_POSITION_BOTTOM, ALLIANCE_TOWER, SHORT_TOWER, MEDIUM_HIGH_TOWER, ARM_DEPLOY};
@@ -188,6 +188,19 @@ void nine_cube_place()
   intake_off();
 }
 
+void edited_nine_cube_place()
+{
+  intake_on(100);
+  nine_cubes();
+  intake_off();
+  pros::delay(200);
+  tray_return();
+  async_gyro_drive(chassis, -10_in, 40);
+  intake_on(-65);
+  wait_for_drive_complete();
+  intake_off();
+}
+
 void seven_cube_place()
 {
   intake_on(19);
@@ -212,6 +225,40 @@ okapi::Motor rf_mtr(RIGHT_FRONT_WHEEL_PORT,true,AbstractMotor::gearset::green);
 okapi::Motor rr_mtr(RIGHT_REAR_WHEEL_PORT,true,AbstractMotor::gearset::green);
 
 
+const double arm_epsilon = 2.0;
+const double arm_kp = 0.8;
+
+double arm_error = 0.0;
+
+void arm_vel_PID(double arm_target_position, double arm_max_speed) {
+  double arm_start_position = a_mtr.getPosition();
+  double arm_current_position = a_mtr.getPosition();
+  arm_error = arm_target_position - arm_current_position;
+
+  while(arm_error > arm_epsilon) {
+
+    double arm_speed = arm_error * arm_kp;
+
+    a_mtr.moveVelocity(arm_speed);
+
+    //Removes impossible speeds by setting the speed down to a possible one
+    if(arm_speed > arm_max_speed) {
+      arm_speed = arm_max_speed;
+    }
+
+    if(arm_speed < arm_max_speed * -1) {
+      arm_speed = arm_max_speed * -1;
+    }
+
+    arm_current_position = a_mtr.getPosition();
+
+    arm_error = arm_target_position - arm_current_position;
+
+    pros::delay(33);
+  }
+  a_mtr.move(0);
+}
+
 const double tray_epsilon = 10.0;
 const double tray_kp = 0.8;
 
@@ -229,7 +276,7 @@ void tray_stack(double tray_target_position, double tray_max_speed)
   while(tray_distance_remaining > tray_epsilon)
   {
 
-      double tray_speed = tray_distance_remaining * tray_kp;
+      double tray_speed = tray_distance_remaining; //* tray_kp;
 
       t_mtr.moveVelocity(tray_speed);
 
@@ -247,11 +294,23 @@ void tray_stack(double tray_target_position, double tray_max_speed)
       tray_current_position = t_mtr.getPosition();
 
       tray_distance_remaining = tray_target_position - tray_current_position;
+
+      pros::delay(33);
   }
   t_mtr.move(0);
-
-  pros::delay(33);
 }
+
+void test_nine_point();
+void blue_back_port_5();
+void red_back_port_4();
+void red_front_port_3();
+void blue_front_port_2();
+void skills_port_1();
+void testing();
+void testing_nine_same_stack();
+void testing_nine_diff_stack(double start_time_x);
+void new_blue_back_port_5();
+void new_red_back_port_5();
 
 void autonomous()
 {
@@ -269,54 +328,335 @@ void autonomous()
   chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
   //Resets the gyro so that changes to the position during pre-autonomous do not affect autonomous
   gyro_reset();
-  t_mtr.tarePosition();
 
-  tray_stack(TRAY_TEST_POS, 100);
+  testing_nine_diff_stack(start_time);
+  //new_red_back_port_5();
 
+  double end_time = pros::c::millis();
+  pros::lcd::print(6,"autonomous Time %f", end_time - start_time);
+}
 
-//BLUE BACK PORT 5
+void testing_nine_diff_stack(double start_time_x)
+{
+
+  intake_on(-60);
+  a_mtr.move(60);
+  pros::delay(1000);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  double last_time = start_time_x;
+  double time_sync = pros::c::millis();
+  pros::lcd::print(0,"Deploy Time %f", time_sync - last_time);
+  async_gyro_drive(chassis, 20_in, 80);
+  intake_on();
+  pros::delay(400);
+  intake_off();
+  alliance_tower();
+  wait_for_drive_complete();
+  intake_on(-200);
+  pros::delay(600);
+  intake_off();
+  bottom();
+  pros::delay(500);
+  async_gyro_drive(chassis, -10_in, 80);
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 48_deg);
+  last_time = time_sync;
+  time_sync = pros::c::millis();
+  pros::lcd::print(1,"1st Tower %f", time_sync - last_time);
+  //async_gyro_drive(chassis, -13_in, 90);
+  //wait_for_drive_complete();
+  async_gyro_drive(chassis, 115_in, 50);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  last_time = time_sync;
+  time_sync = pros::c::millis();
+  pros::lcd::print(2,"Picked Up Cubes %f", time_sync - last_time);
+  intake_on();
+  gyro_turn(chassis, -110_deg, 100, 22.5);
+  async_gyro_drive(chassis, -20_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 45_deg, 100, 22.5);
+  gyro_drive(chassis, 30_in, 80, false);
+  intake_off();
+  edited_nine_cube_place();
+  last_time = time_sync;
+  time_sync = pros::c::millis();
+  pros::lcd::print(3,"Stacked %f", time_sync - last_time);
+  gyro_turn(chassis, -95_deg, 100, 22.5);
+  async_gyro_drive(chassis, -6_in, 80);
+  wait_for_drive_complete();
+  async_gyro_drive(chassis, 17_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, -88.5_deg, 100, 22.5);
+  async_gyro_drive(chassis, 20_in, 50);
+  intake_on(-130);
+  wait_for_drive_complete();
+  intake_off();
+  medium_high_tower();
+  gyro_drive(chassis, 6_in, 80);
+  intake_on(-150);
+  pros::delay(500);
+  intake_off();
+  async_gyro_drive(chassis, -5_in, 60);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 90_deg);
+  async_gyro_drive(chassis, -21_in, 60);
+  bottom();
+  wait_for_drive_complete();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  last_time = time_sync;
+  time_sync = pros::c::millis();
+  pros::lcd::print(4,"3rd Tower %f", time_sync - last_time);
+
 /*
-intake_on(-60);
-a_mtr.move(60);
-pros::delay(1000);
-a_mtr.move(0);
-bottom();
-arm.waitUntilSettled();
-a_mtr.move(-100);
-pros::delay(400);
-a_mtr.move(0);
-intake_off();
-async_gyro_drive(chassis, 2_in, 55);
-intake_on();
-wait_for_drive_complete();
-intake_off();
-gyro_turn(chassis, 90_deg, 100, 22.5);
-async_gyro_drive(chassis, 14_in, 100);
-intake_on(-60);
-wait_for_drive_complete();
-intake_off();
-intake_on(-70);
-pros::delay(500);
-intake_off();
-async_gyro_drive(chassis, -7_in, 55);
-intake_on(-70);
-wait_for_drive_complete();
-intake_off();
-gyro_turn(chassis, -92_deg, 100, 22.5);
-async_gyro_drive(chassis, 39_in, 55);
-intake_on(-100);
-wait_for_drive_complete();
-intake_off();
-gyro_turn(chassis, -90_deg, 100, 22.5);
-async_gyro_drive(chassis, 44_in, 200);
-intake_on(200);
-wait_for_drive_complete();
-intake_off();
-intake_on(200);
+  async_gyro_drive(chassis, 123_in, 50);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_drive(chassis, -1_in, 80, false);
+  gyro_turn(chassis, 55_deg, 100, 22.5);
+  gyro_drive(chassis, 30_in, 80, false);
+  seven_cube_place();
 */
+}
 
-//RED BACK PORT 4
-/*
+void testing_nine_same_stack()
+{
+  intake_on(-60);
+  a_mtr.move(60);
+  pros::delay(1000);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  async_gyro_drive(chassis, 20_in, 80);
+  intake_on();
+  pros::delay(400);
+  intake_off();
+  alliance_tower();
+  wait_for_drive_complete();
+  intake_on(-200);
+  pros::delay(600);
+  intake_off();
+  bottom();
+  pros::delay(500);
+  async_gyro_drive(chassis, -14_in, 80);
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 45_deg);
+  async_gyro_drive(chassis, -13_in, 90);
+  wait_for_drive_complete();
+  async_gyro_drive(chassis, 123_in, 50);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  intake_on();
+  async_gyro_drive(chassis, -5_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, -90_deg, 100, 22.5);
+  async_gyro_drive(chassis, 13_in, 80);
+  wait_for_drive_complete();
+  gyro_reset();
+  async_gyro_drive(chassis, -6_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 45_deg, 100, 22.5);
+  async_gyro_drive(chassis, 13.5_in, 80);
+  wait_for_drive_complete();
+  nine_cube_place();
+}
+
+void new_red_back_port_5()
+{
+  intake_on(-60);
+  a_mtr.move(100);
+  pros::delay(400);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  async_gyro_drive(chassis, 20_in, 55);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, -90_deg, 100, 22.5);
+  async_gyro_drive(chassis, 20_in, 100);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, -50_deg, 100, 22.5);
+  async_gyro_drive(chassis, 4_in, 100);
+  intake_on(-200);
+  wait_for_drive_complete();
+  intake_off();
+  async_gyro_drive(chassis, -6_in, 60);
+  intake_on(-60);
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, 145_deg, 100, 22.5);
+  async_gyro_drive(chassis, 23_in, 100);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 91_deg, 100, 22.5);
+  async_gyro_drive(chassis, 40_in, 100);
+  intake_on(200);
+  wait_for_drive_complete();
+  intake_off();
+  intake_on();
+}
+
+void new_blue_back_port_5()
+{
+  intake_on(-60);
+  a_mtr.move(100);
+  pros::delay(400);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  async_gyro_drive(chassis, 20_in, 55);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, 90_deg, 100, 22.5);
+  async_gyro_drive(chassis, 20_in, 100);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, 50_deg, 100, 22.5);
+  async_gyro_drive(chassis, 4_in, 100);
+  intake_on(-200);
+  wait_for_drive_complete();
+  intake_off();
+  async_gyro_drive(chassis, -6_in, 60);
+  intake_on(-60);
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, -145_deg, 100, 22.5);
+  async_gyro_drive(chassis, 23_in, 100);
+  wait_for_drive_complete();
+  gyro_turn(chassis, -91_deg, 100, 22.5);
+  async_gyro_drive(chassis, 40_in, 100);
+  intake_on(200);
+  wait_for_drive_complete();
+  intake_off();
+  intake_on();
+
+
+}
+
+
+void testing()
+{
+  intake_on();
+  gyro_turn(chassis, 110_deg, 100, 22.5);
+  async_gyro_drive(chassis, -20_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, -45_deg, 100, 22.5);
+  gyro_drive(chassis, 30_in, 80, false);
+  intake_off();
+  nine_cube_place();
+}
+
+void test_nine_point()
+{
+  intake_on(-60);
+  a_mtr.move(60);
+  pros::delay(1000);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  async_gyro_drive(chassis, 48_in, 80);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, -90_deg, 100, 22.5);
+  async_gyro_drive(chassis, 24_in, 80);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, -90_deg, 100, 22.5);
+  async_gyro_drive(chassis, 30_in, 80);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, 45_deg, 100, 22.5);
+  async_gyro_drive(chassis, 30_in, 80);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+}
+
+void blue_back_port_5()
+{
+  intake_on(-60);
+  a_mtr.move(60);
+  pros::delay(1000);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  async_gyro_drive(chassis, 2_in, 55);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, 90_deg, 100, 22.5);
+  async_gyro_drive(chassis, 14_in, 100);
+  intake_on(-60);
+  wait_for_drive_complete();
+  intake_off();
+  intake_on(-70);
+  pros::delay(500);
+  intake_off();
+  async_gyro_drive(chassis, -7_in, 55);
+  intake_on(-70);
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, -92_deg, 100, 22.5);
+  async_gyro_drive(chassis, 39_in, 55);
+  intake_on(-100);
+  wait_for_drive_complete();
+  intake_off();
+  gyro_turn(chassis, -90_deg, 100, 22.5);
+  async_gyro_drive(chassis, 44_in, 200);
+  intake_on(200);
+  wait_for_drive_complete();
+  intake_off();
+  intake_on(200);
+}
+
+void red_back_port_4()
+{
 intake_on(-60);
 a_mtr.move(60);
 pros::delay(1000);
@@ -354,39 +694,39 @@ intake_on(200);
 wait_for_drive_complete();
 intake_off();
 intake_on(200);
-*/
+}
 
-//RED FRONT PORT 3
-/*
-intake_on(-60);
-a_mtr.move(60);
-pros::delay(1000);
-a_mtr.move(0);
-bottom();
-arm.waitUntilSettled();
-a_mtr.move(-100);
-pros::delay(400);
-a_mtr.move(0);
-intake_off();
-async_gyro_drive(chassis, 48_in, 55);
-intake_on();
-wait_for_drive_complete();
-intake_off();
-intake_on();
-pros::delay(500);
-intake_off();
-async_gyro_drive(chassis, -30_in, 80);
-wait_for_drive_complete();
-gyro_turn(chassis, 132_deg, 100, 22.5);
-async_gyro_drive(chassis, 16_in, 80);
-intake_on(-30);
-wait_for_drive_complete();
-intake_off();
-seven_cube_place();
-*/
+void red_front_port_3()
+{
+  intake_on(-60);
+  a_mtr.move(60);
+  pros::delay(1000);
+  a_mtr.move(0);
+  bottom();
+  arm.waitUntilSettled();
+  a_mtr.move(-100);
+  pros::delay(400);
+  a_mtr.move(0);
+  intake_off();
+  async_gyro_drive(chassis, 48_in, 55);
+  intake_on();
+  wait_for_drive_complete();
+  intake_off();
+  intake_on();
+  pros::delay(500);
+  intake_off();
+  async_gyro_drive(chassis, -30_in, 80);
+  wait_for_drive_complete();
+  gyro_turn(chassis, 132_deg, 100, 22.5);
+  async_gyro_drive(chassis, 16_in, 80);
+  intake_on(-30);
+  wait_for_drive_complete();
+  intake_off();
+  seven_cube_place();
+}
 
-//BLUE FRONT PORT 2
-/*
+void blue_front_port_2()
+{
   intake_on(-60);
   a_mtr.move(60);
   pros::delay(1000);
@@ -414,10 +754,10 @@ seven_cube_place();
   wait_for_drive_complete();
   intake_off();
   seven_cube_place();
-*/
+}
 
-//SKILLS PORT 1
-/*
+void skills_port_1()
+{
   intake_on(-60);
   a_mtr.move(60);
   pros::delay(1000);
@@ -527,12 +867,4 @@ seven_cube_place();
   intake_on(-200);
   pros::delay(800);
   intake_off();
-*/
-
-
-  //async_gyro_drive(chassis, 48_in, 50);
-  //gyro_turn(chassis, 90_deg, 100);
-
-  double end_time = pros::c::millis();
-  pros::lcd::print(1,"autonomous Time %f",end_time - start_time);
 }

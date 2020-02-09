@@ -58,7 +58,7 @@ const double degrees_per_inch = degrees_per_circ / wheel_circ;
 
 //Drive X distance at Y speed
 //void drive(double distance_in_inches, double max_speed)
-void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_speed)
+void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_speed, bool drive_straight)
 {
 
     //Chassis arcade takes values from -1 to 1 so this line allows a value from -100 to 100
@@ -211,15 +211,18 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
         // This code will make the robot drive straight by turning small distances if the robot has driven slightly to the right or left  //
         // - This does not support driving backwards right now.                                                                           //
         // ****************************************************************************************************************************** //
+        double turn_speed = 0.0;
+        if(drive_straight == true)
+        {
+          //Gets the gyro's current value
+          double drive_gyro_value = get_proper_gyro();
 
-        //Gets the gyro's current value
-        double drive_gyro_value = get_proper_gyro();
+          //Calculates the amount that the robot is off of its heading
+          double drive_straight_error = initial_drive_gyro_value - drive_gyro_value;
 
-        //Calculates the amount that the robot is off of its heading
-        double drive_straight_error = initial_drive_gyro_value - drive_gyro_value;
-
-        //Creates a turn speed so that different sides can be slowed down
-        double turn_speed = drive_straight_error * drive_straight_kp;
+          //Creates a turn speed so that different sides can be slowed down
+          turn_speed = drive_straight_error * drive_straight_kp;
+        }
 
 
         // ******************************************* //
@@ -438,6 +441,7 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
         printf("adj speed: %f\n",speed);
 
         //Setting the desired speed in a percent form and waiting 10 milliseconds
+        //chassis.arcade(0.0, speed);
         chassis.arcade(0.0, speed);
         pros::delay(33);
 
