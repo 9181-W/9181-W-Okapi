@@ -65,8 +65,8 @@ void opcontrol()
 		{
       if (master.get_digital(DIGITAL_L2) == 1)
       {
-        li_mtr.move(-50);
-        ri_mtr.move(-50);
+        li_mtr.move(-45);
+        ri_mtr.move(-45);
       }
       else
       {

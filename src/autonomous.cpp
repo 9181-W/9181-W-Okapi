@@ -106,13 +106,6 @@ void nine_cubes()
 //ARM POSITION PID
 auto arm = AsyncControllerFactory::posIntegrated(ARM_MOTOR_PORT);
 
-/*
-void push_down()
-{
-  a_mtr.move(-50);
-}
-*/
-
 //Different arm positions
 void bottom()
 {
@@ -154,6 +147,27 @@ okapi::ChassisControllerIntegrated chassis = ChassisControllerFactory::create
   AbstractMotor::gearset::green,
   {4.0_in, 9_in}
 );
+
+void forty_five_deg_turn(QAngle angle = 45_deg)
+{
+  gyro_turn(chassis, angle, 100, 20, 0.015, 0.0, 0.0, 2);
+}
+
+void fifty_deg_to_eighty_deg_turn()
+{
+  gyro_turn(chassis, 45_deg, 100, 22.5);
+}
+
+void ninety_deg_turn()
+{
+  gyro_turn(chassis, 90_deg, 100, 17.5, 0.011, 0.0, 0.0, 2);
+}
+
+void one_hundred_eighty_deg_turn()
+{
+  gyro_turn(chassis, 180_deg, 100, 17.5, 0.011, 0.0, 0.0, 2);
+}
+
 
 //INTAKE VELOCITY PID
 auto intakes = AsyncControllerFactory::velIntegrated
@@ -246,7 +260,7 @@ const double arm_kp = 0.8;
 
 double arm_error = 0.0;
 
-void arm_vel_PID(double arm_target_position, double arm_max_speed)
+void arm_pos_P(double arm_target_position, double arm_max_speed)
 {
   double arm_start_position = a_mtr.getPosition();
   double arm_current_position = a_mtr.getPosition();
@@ -328,6 +342,7 @@ void testing_nine_same_stack();
 void testing_nine_diff_stack(double start_time_x);
 void new_blue_back_port_5();
 void new_red_back_port_5();
+void testing_new();
 
 void autonomous()
 {
@@ -341,12 +356,14 @@ void autonomous()
   t_mtr.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
   li_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
   ri_mtr.setBrakeMode(AbstractMotor::brakeMode::brake);
-  chassis.setBrakeMode(AbstractMotor::brakeMode::brake);
+  //chassis.setBrakeMode(AbstractMotor::brakeMode::brake);
   chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
   //Resets the gyro so that changes to the position during pre-autonomous do not affect autonomous
-  gyro_reset();
+  //gyro_reset();
 
-  testing_nine_diff_stack(start_time);
+  testing_new();
+
+  //testing_nine_diff_stack(start_time);
   //blue_front_port_2();
   //new_blue_back_port_5();
 
@@ -468,6 +485,11 @@ void testing_nine_diff_stack(double start_time_x)
   intake_off();
 
 
+}
+
+void testing_new()
+{
+  forty_five_deg_turn();
 }
 
 void testing_nine_same_stack()

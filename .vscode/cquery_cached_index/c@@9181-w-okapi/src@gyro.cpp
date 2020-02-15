@@ -1,6 +1,7 @@
 #include "main.h"
 #include "okapi/api.hpp"
 #include "gyro.h"
+#include "inertial.h"
 using namespace okapi;
 
 #define ADI_GYRO_PORT 2
@@ -12,7 +13,7 @@ ADIGyro* gyro_B = NULL;
 //then scales the gyro so that a full turn = 360 degrees
 double get_proper_gyro()
 {
-  return gyro_B->getRemapped(3600.0, -3600.0) / 10.0 * 0.9551;
+  return get_inertial_value();
 }
 
 void gyro_reset()
@@ -26,7 +27,7 @@ void gyro_display(void* param)
 {
   while (true)
   {
-    pros::lcd::print(7,"Gryo Value %f",get_proper_gyro());
+    //pros::lcd::print(7,"Gryo Value %f",get_proper_gyro());
     pros::delay(50);
   }
 }
@@ -290,11 +291,11 @@ void async_gyro_drive(okapi::ChassisController& chassis, QLength distance, doubl
 }
 
 //Turn x degrees at y speed
-void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed, double min_speed)
+void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed, double min_speed, double kp, double ki, double kd, double epsilon)
 {
 
     //Chassis arcade takes values from -1 to 1 so this line allows a value from -100 to 100
-    if (max_speed > 60) max_speed = 60;
+    //if (max_speed > 60) max_speed = 60;
     max_speed = max_speed / 100;
     if (min_speed < 17.5) min_speed = 17.5;
     min_speed = min_speed / 100;
@@ -302,11 +303,11 @@ void gyro_turn(okapi::ChassisController& chassis, QAngle angle, double max_speed
     //Sets the encoder units to se degrees instead of ticks
     chassis.setEncoderUnits(AbstractMotor::encoderUnits::degrees);
     //Setting the Proportional,Integral,Differential constants (P.I.D.)
-    const double turn_kp = 0.011;
-    const double turn_ki = 0.000;
-    const double turn_kd = 0.000;
+    double turn_kp = kp;//0.011;
+    double turn_ki = ki;//0.000;
+    double turn_kd = kd;//0.000;
     //Creates a constant for allowable error before stopping
-    const double turn_epsilon = 2.0;
+    double turn_epsilon = epsilon;//2.0;
     //Creates a maximum speed for velocity adjustment so that the robot will accelerate smoothly
     //and have no jerk at the beggining
     const double turn_maximum_vel_adj = 5.0;

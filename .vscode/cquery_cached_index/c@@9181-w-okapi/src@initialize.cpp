@@ -1,6 +1,7 @@
 #include "main.h"
 #include "okapi/api.hpp"
 #include "gyro.h"
+#include "inertial.h"
 using namespace okapi;
 
 #define ANALOG_LED_PORT 1
@@ -34,6 +35,7 @@ void initialize()
   pros::lcd::print(5, "GOOD LUCK");
 
   gyro_initialize();
+  inertial_initialize();
 
   /*
   pros::Task my_task (led_fn, (void*)"PROS", TASK_PRIORITY_DEFAULT,
