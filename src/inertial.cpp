@@ -23,11 +23,15 @@ void inertial_initialize()
   inertial_A = new pros::Imu(INERTIAL_PORT);
   inertial_A->reset();
 
-  while(inertial_A->is_calibrating())
+  double start_time = pros::c::millis();
+  pros::lcd::print(7,"CALIBRATING");
+  pros::delay(1000);
+  while(inertial_A->is_calibrating() == true)
   {
-    pros::lcd::print(7,"CALIBRATING");
-    pros::delay(10);
+    pros::delay(50);
   }
+  double end_time = pros::c::millis();
+  pros::lcd::print(5,"Calibration Time %f", end_time - start_time);
 
   pros::Task inetrial_display_task (inertial_update, (void*)"PROSV5NEW", TASK_PRIORITY_DEFAULT,
     TASK_STACK_DEPTH_DEFAULT, "Inertial Display Task");

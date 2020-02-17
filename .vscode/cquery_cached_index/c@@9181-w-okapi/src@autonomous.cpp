@@ -150,7 +150,7 @@ okapi::ChassisControllerIntegrated chassis = ChassisControllerFactory::create
 
 void forty_five_deg_turn(QAngle angle = 45_deg)
 {
-  gyro_turn(chassis, angle, 100, 20, 0.015, 0.0, 0.0, 2);
+  gyro_turn(chassis, angle, 100, 20, 0.014, 0.0, 0.0, 2);
 }
 
 void fifty_deg_to_eighty_deg_turn()
@@ -160,7 +160,7 @@ void fifty_deg_to_eighty_deg_turn()
 
 void ninety_deg_turn()
 {
-  gyro_turn(chassis, 90_deg, 100, 17.5, 0.011, 0.0, 0.0, 2);
+  gyro_turn(chassis, 90_deg, 100, 17.5, 0.011, 0.0, 0.0, 2.5);
 }
 
 void one_hundred_eighty_deg_turn()
