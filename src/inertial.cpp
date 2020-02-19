@@ -25,7 +25,7 @@ void inertial_initialize()
 
   double start_time = pros::c::millis();
   pros::lcd::print(7,"CALIBRATING");
-  pros::delay(1000);
+  pros::delay(10);
   while(inertial_A->is_calibrating() == true)
   {
     pros::delay(50);

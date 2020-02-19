@@ -18,7 +18,7 @@ double get_proper_gyro()
 
 void gyro_reset()
 {
-  gyro_B->reset();
+  inertial_reset();
 }
 
 
@@ -108,7 +108,7 @@ void gyro_drive(okapi::ChassisController& chassis, QLength distance, double max_
     double drive_error = distance_in_degrees - static_cast<double>((current_pos_values[0] + current_pos_values[1])) / 2.0;
     //Creates a variable that contains the initial gyro value (0)
     gyro_reset();
-    double initial_drive_gyro_value = 0.0;
+    double initial_drive_gyro_value = get_proper_gyro();
     //Sets the first speed to zero
     double last_speed = 0.0;
 
