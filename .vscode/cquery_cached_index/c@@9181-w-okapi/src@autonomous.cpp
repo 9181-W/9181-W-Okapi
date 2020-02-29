@@ -13,7 +13,12 @@ void autonomous()
 
   init_auto();
 
-  testing_new();
+  //blue_back_port_5();
+  //red_back_port_4();
+
+  //testing_new();
+
+  testing();
 
   //testing_nine_diff_stack(start_time);
   //blue_front_port_2();

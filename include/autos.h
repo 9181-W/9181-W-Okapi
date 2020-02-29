@@ -12,9 +12,8 @@ void blue_front_port_2();
 void skills_port_1();
 void testing();
 void testing_nine_same_stack();
-void testing_nine_diff_stack(double start_time_x);
-void new_blue_back_port_5();
-void new_red_back_port_5();
+void two_point_blue_back_port_5();
+void two_point_red_back_port_5();
 void testing_new();
 
 #endif

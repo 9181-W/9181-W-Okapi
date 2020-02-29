@@ -18,13 +18,13 @@ using namespace okapi;
 
 
 //Deinfes different wire ports and positions
-#define LEFT_FRONT_WHEEL_PORT 1
+#define LEFT_FRONT_WHEEL_PORT 13
 #define LEFT_REAR_WHEEL_PORT 11
 #define RIGHT_FRONT_WHEEL_PORT 10
 #define RIGHT_REAR_WHEEL_PORT 20
 #define TRAY_MOTOR_PORT 15
 #define ARM_MOTOR_PORT 16
-#define LEFT_INTAKE_MOTOR_PORT 8
+#define LEFT_INTAKE_MOTOR_PORT 1
 #define RIGHT_INTAKE_MOTOR_PORT 6
 
 #define MAX_SPEED (200.0)
@@ -36,6 +36,7 @@ using namespace okapi;
 #define FIFTY_SPEED (50.0)
 #define FORTY_SPEED (40.0)
 #define TWENTY_FIVE_SPEED (25.0)
+#define TEN_SPEED (10.0)
 
 //ARM PLACE POSITIONS
 #define NUMBER_OF_HEIGHTS 5
@@ -47,10 +48,10 @@ using namespace okapi;
 
 //TRAY POSITIONS
 #define TRAY_BOTTOM_POS -30
-#define TRAY_ARM_POS 360
+#define TRAY_ARM_POS 260
 #define TRAY_PLACE_POS 720
 #define TRAY_SLOW_POS 160
-#define TRAY_TEST_POS 650
+#define TRAY_TEST_POS 710
 
 const int POSITIONS[NUMBER_OF_HEIGHTS] =
   {ARM_POSITION_BOTTOM, ALLIANCE_TOWER, SHORT_TOWER, MEDIUM_HIGH_TOWER, ARM_DEPLOY};
@@ -61,9 +62,14 @@ auto tray = AsyncControllerFactory::posIntegrated(TRAY_MOTOR_PORT);
 //Different tray positions
 void tray_return()
 {
-  tray.setMaxVelocity(NINETY_SPEED);
+  tray.setMaxVelocity(TWENTY_FIVE_SPEED);
   tray.setTarget(TRAY_BOTTOM_POS);
-  tray.waitUntilSettled();
+}
+
+void tray_half()
+{
+  tray.setMaxVelocity(MAX_SPEED);
+  tray.setTarget(TRAY_ARM_POS);
 }
 
 void tray_return_fast()
@@ -83,16 +89,16 @@ void tray_up()
 void three_cubes()
 {
   tray.reset();
-  tray.setMaxVelocity(SIXTY_SPEED);
-  tray.setTarget(TRAY_TEST_POS);
+  tray.setMaxVelocity(MAX_SPEED);
+  tray.setTarget(TRAY_PLACE_POS);
   tray.waitUntilSettled();
 }
 
 void six_cubes()
 {
   tray.reset();
-  tray.setMaxVelocity(SIXTY_SPEED);
-  tray.setTarget(TRAY_PLACE_POS);
+  tray.setMaxVelocity(FORTY_SPEED);
+  tray.setTarget(TRAY_TEST_POS);
   tray.waitUntilSettled();
 }
 
@@ -149,24 +155,40 @@ okapi::ChassisControllerIntegrated chassis = ChassisControllerFactory::create
   {4.0_in, 9_in}
 );
 
-void forty_five_deg_turn(QAngle angle = 45_deg)
+void forty_five_deg_turn(QAngle angle)
 {
-  gyro_turn(chassis, angle, 100, 20, 0.014, 0.0, 0.0, 2);
+  //gyro_turn(chassis, angle, 100, 20, 0.014, 0.0, 0.0, 2);
+  gyro_turn(chassis, angle, 100, 25, 0.014, 0.0, 0.0, 3);
 }
 
-void fifty_deg_to_eighty_deg_turn()
+void fifty_deg_turn(QAngle angle)
 {
-  gyro_turn(chassis, 45_deg, 100, 22.5);
+  //gyro_turn(chassis, angle, 100, 20, 0.014, 0.0, 0.0, 2);
+  gyro_turn(chassis, angle, 100, 25, 0.010, 0.0, 0.0, 3);
+
 }
 
-void ninety_deg_turn()
+
+void ninety_deg_turn(QAngle new_angle)
 {
-  gyro_turn(chassis, 90_deg, 100, 17.5, 0.011, 0.0, 0.0, 2.5);
+  //gyro_turn(chassis, new_angle, 100, 17.5, 0.00090, 0.0, 0.0, 2.5);
+  gyro_turn(chassis, new_angle, 100, 17.5, 0.0090, 0.0, 0.0, 2.5);
+}
+
+void ninety_deg_turn_heavy_inaccurate(QAngle new_angle)
+{
+  //gyro_turn(chassis, new_angle, 100, 50, 0.010, 0.0, 0.0, 10);
+  gyro_turn(chassis, new_angle, 100, 50, 0.0090, 0.0, 0.0, 10);
+}
+
+void one_hundred_twenty_deg_turn_heavy(QAngle new_angle)
+{
+  gyro_turn(chassis, new_angle, 80, 22.5, 0.05, 0.0, -0.25, 2);
 }
 
 void one_hundred_eighty_deg_turn()
 {
-  gyro_turn(chassis, 180_deg, 100, 17.5, 0.011, 0.0, 0.0, 2);
+  gyro_turn(chassis, 180_deg, 100, 17.5, 0.00080, 0.0, 0.0, 2);
 }
 
 
@@ -209,8 +231,8 @@ void edited_nine_cube_place()
   nine_cubes();
   intake_off();
   pros::delay(200);
-  tray_return();
-  async_gyro_drive(chassis, -10_in, 40);
+  tray_return_fast();
+  async_gyro_drive(chassis, -16_in, 40);
   intake_on(-65);
   wait_for_drive_complete();
   intake_off();
